@@ -11,7 +11,7 @@ c = rmgpy.constants.c
 amu = rmgpy.constants.amu
 Avogadro = rmgpy.constants.Na
 pi = np.pi
-
+invcm_to_invm = 1.0E2
 
 # print(f'R={R}')
 # print(f'kB={kB}')
@@ -68,9 +68,8 @@ class AdsorbateThermoCalc:
         return Q_trans, S_trans, Cp_trans, dH_trans
 
     def get_vibrational_thermo(self):
-        units = 1.0
-        # TODO check units
-        
+        units = h * c / kB * invcm_to_invm
+
         frequencies = self.frequencies  # TODO check sorted
         if self.twoD_gas:  # skip the first two if we do 2D gas
             frequencies = frequencies[2:]
@@ -81,36 +80,7 @@ class AdsorbateThermoCalc:
         x = np.matmul(np.matrix(units / self.temperatures).transpose(), np.matrix(frequencies))
         Q_vib = np.prod(1.0 / (1.0 - np.exp(-x)), 1)
         S_vib = np.sum(-np.log(1.0 - np.exp(-x)) + np.multiply(x, np.exp(-x)) / (1.0 - np.exp(-x)), 1) * R
-        dH_vib = np.multiply(np.sum(np.multiply(x, np.exp(-x)) / (1.0 - np.exp(-x)), 1), self.temperatures) * R 
+        dH_vib = np.sum(np.multiply(x, np.exp(-x)) / (1.0 - np.exp(-x)), 1) * R
+        dH_vib = np.multiply(np.sum(np.multiply(x, np.exp(-x)) / (1.0 - np.exp(-x)), 1), np.matrix(self.temperatures).transpose()) * R 
         Cv_vib = np.sum(np.multiply(np.float_power(x, 2.0), np.exp(-x)) / np.float_power((1.0 - np.exp(-x)), 2.0), 1) * R
         return Q_vib, S_vib, dH_vib, Cv_vib
-
-
-def get_translation_thermo(temperatures):
-    # unpack the constants (not essential, but makes it easier to read)
-    # R = molecule.R
-    # kB = molecule.kB
-    # h = molecule.h
-    # amu = molecule.amu
-    # P_ref = molecule.P_ref
-    # m = molecule.adsorbate_mass
-    # pi = np.pi
-    # area = molecule.unit_cell_area
-    # sites = molecule.site_occupation_number
-
-    Q_trans  = np.ones(len(temperatures)) 
-
-    # Q_trans[i] = (2*pi*m*amu*kB*T/h**2) * site_area * molecule_dentate
-    # S_trans[i] = R * (2.0 + np.log( Q_trans[i] ))
-    # Cp_trans[i] = R * 1.0 #NOTE: Cp = Cv 
-    # dH_trans[i] = R * 1.0 * T
-
-
-
-
-    # # add the results to the thermo object
-    # molecule.Q_trans = Q_trans
-    # molecule.S_trans = S_trans
-    # molecule.dH_trans = dH_trans
-    # molecule.Cp_trans = Cp_trans 
-
