@@ -87,8 +87,8 @@ class AdsorbateThermoCalc:
 
     def get_translation_thermo(self):
         # Just using the area is not a function of temperature equations
-        Q_trans = ((2.0 * pi * self.molecular_weight * amu * kB * self.temperatures) /
-                   np.float_power(h, 2.0)) * self.site_area * self.site_occupation_number
+        Q_trans = ((2.0 * pi * self.molecular_weight * amu * kB * self.temperatures)
+                   / np.float_power(h, 2.0)) * self.site_area * self.site_occupation_number
         S_trans = R * (2.0 + np.log(Q_trans))
         Cp_trans = R * np.ones(len(self.temperatures))  # NOTE: Cp = Cv
         dH_trans = R * 1.0 * self.temperatures
@@ -107,7 +107,7 @@ class AdsorbateThermoCalc:
         x = np.matmul(np.matrix(units / self.temperatures).transpose(), np.matrix(frequencies))
         Q_vib = np.prod(1.0 / (1.0 - np.exp(-x)), 1)
         S_vib = np.sum(-np.log(1.0 - np.exp(-x)) + np.multiply(x, np.exp(-x)) / (1.0 - np.exp(-x)), 1) * R
-        dH_vib = np.multiply(np.sum(np.multiply(x, np.exp(-x)) / (1.0 - np.exp(-x)), 1), np.matrix(self.temperatures).transpose()) * R 
+        dH_vib = np.multiply(np.sum(np.multiply(x, np.exp(-x)) / (1.0 - np.exp(-x)), 1), np.matrix(self.temperatures).transpose()) * R
         Cv_vib = np.sum(np.multiply(np.float_power(x, 2.0), np.exp(-x)) / np.float_power((1.0 - np.exp(-x)), 2.0), 1) * R
 
         # rewrap the matrices as arrays
@@ -239,59 +239,59 @@ class AdsorbateThermoCalc:
             print("We have a problem! Cannot find switching temperature")
 
         # start by creating the independent variable matrix for the low-temperature fit
-        YT = np.array([np.ones(len(self.temperatures[:i_switch + 1])), self.temperatures[:i_switch + 1], self.temperatures[:i_switch+1] ** 2.0, self.temperatures[:i_switch+1] ** 3.0, self.temperatures[:i_switch + 1] ** 4.0 ], dtype=np.float64 )  # this is transpose of our Y
+        YT = np.array([np.ones(len(self.temperatures[:i_switch + 1])), self.temperatures[:i_switch + 1], self.temperatures[:i_switch + 1] ** 2.0, self.temperatures[:i_switch + 1] ** 3.0, self.temperatures[:i_switch + 1] ** 4.0], dtype=np.float64)  # this is transpose of our Y
         Y = YT.transpose()  # this is the desired Y
 
         b = heat_capacity[:i_switch + 1] / R
         a_low = np.linalg.lstsq(Y, b)[0]
 
         T_ref = 298.15
-        #now determine the enthalpy coefficient for the low-T region
-        subtract = a_low[0] + a_low[1]/2.0*T_ref + a_low[2]/3.0*T_ref**2.0 + a_low[3]/4.0*T_ref**3.0  + a_low[4]/5.0*T_ref**4.0
+        # now determine the enthalpy coefficient for the low-T region
+        subtract = a_low[0] + a_low[1] / 2.0 * T_ref + a_low[2] / 3.0 * T_ref**2.0 + a_low[3] / 4.0 * T_ref**3.0 + a_low[4] / 5.0 * T_ref**4.0
         a_low = np.append(a_low, reference_enthalpy / R - subtract * T_ref)
-        #now determine the entropy coefficient for the low-T region
-        subtract = a_low[0] * np.log(T_ref) + a_low[1]*T_ref     + a_low[2]/2.0*T_ref**2.0  + a_low[3]/3.0*T_ref**3.0  + a_low[4]/4.0*T_ref**4.0
-        a_low = np.append(a_low, reference_entropy / R - subtract )
+        # now determine the entropy coefficient for the low-T region
+        subtract = a_low[0] * np.log(T_ref) + a_low[1] * T_ref + a_low[2] / 2.0 * T_ref**2.0 + a_low[3] / 3.0 * T_ref**3.0 + a_low[4] / 4.0 * T_ref**4.0
+        a_low = np.append(a_low, reference_entropy / R - subtract)
 
         #
         # NOW SWITCH TO HIGH-TEMPERATURE REGIME!
         #
         T_ref = T_switch
-        #compute the heat capacity, enthalpy, and entropy at the switching point
-        Cp_switch = a_low[0] + a_low[1]*T_ref + a_low[2]*T_ref**2.0  + a_low[3]*T_ref**3.0  + a_low[4]*T_ref**4.0
-        H_switch = a_low[0]*T_ref + a_low[1]/2.0*T_ref**2.0 + a_low[2]/3.0*T_ref**3.0  + a_low[3]/4.0*T_ref**4.0  + a_low[4]/5.0*T_ref**5.0 + a_low[5]
-        S_switch = a_low[0]*np.log(T_ref) + a_low[1]*T_ref + a_low[2]/2.0*T_ref**2.0  + a_low[3]/3.0*T_ref**3.0  + a_low[4]/4.0*T_ref**4.0 + a_low[6]
-        
-        #now repeat the process for the high-temperature regime
+        # compute the heat capacity, enthalpy, and entropy at the switching point
+        Cp_switch = a_low[0] + a_low[1] * T_ref + a_low[2] * T_ref**2.0 + a_low[3] * T_ref**3.0 + a_low[4] * T_ref**4.0
+        H_switch = a_low[0] * T_ref + a_low[1] / 2.0 * T_ref**2.0 + a_low[2] / 3.0 * T_ref**3.0 + a_low[3] / 4.0 * T_ref**4.0 + a_low[4] / 5.0 * T_ref**5.0 + a_low[5]
+        S_switch = a_low[0] * np.log(T_ref) + a_low[1] * T_ref + a_low[2] / 2.0 * T_ref**2.0 + a_low[3] / 3.0 * T_ref**3.0 + a_low[4] / 4.0 * T_ref**4.0 + a_low[6]
+
+        # now repeat the process for the high-temperature regime
         a_high = [0.0]
-        YT = np.array( [ self.temperatures[i_switch:], self.temperatures[i_switch:]**2.0, self.temperatures[i_switch:]**3.0, self.temperatures[i_switch:]**4.0 ],dtype=np.float64 ) #this is transpose of our Y
-        Y = YT.transpose() #this is the desired Y
+        YT = np.array([self.temperatures[i_switch:], self.temperatures[i_switch:]**2.0, self.temperatures[i_switch:]**3.0, self.temperatures[i_switch:]**4.0], dtype=np.float64)  # this is transpose of our Y
+        Y = YT.transpose()  # this is the desired Y
 
         b = heat_capacity[i_switch:] / R - Cp_switch
         a_high = np.append(a_high, np.linalg.lstsq(Y, b)[0])
-        a_high[0] = Cp_switch - (a_high[0] + a_high[1]*T_switch + a_high[2]*T_switch**2.0  + a_high[3]*T_switch**3.0  + a_high[4]*T_switch**4.0)
-        
-        a_high = np.append(a_high, H_switch - (a_high[0] + a_high[1]/2.0*T_ref + a_high[2]/3.0*T_ref**2.0  + a_high[3]/4.0*T_ref**3.0  + a_high[4]/5.0*T_ref**4.0)*T_ref )
-        a_high = np.append(a_high, S_switch - (a_high[0]*np.log(T_ref) + a_high[1]*T_ref + a_high[2]/2.0*T_ref**2.0  + a_high[3]/3.0*T_ref**3.0  + a_high[4]/4.0*T_ref**4.0) )
+        a_high[0] = Cp_switch - (a_high[0] + a_high[1] * T_switch + a_high[2] * T_switch**2.0 + a_high[3] * T_switch**3.0 + a_high[4] * T_switch**4.0)
 
-        #Check to see if there is a discontinuity
-        if (1==0):
+        a_high = np.append(a_high, H_switch - (a_high[0] + a_high[1] / 2.0 * T_ref + a_high[2] / 3.0 * T_ref**2.0 + a_high[3] / 4.0 * T_ref**3.0 + a_high[4] / 5.0 * T_ref**4.0) * T_ref)
+        a_high = np.append(a_high, S_switch - (a_high[0] * np.log(T_ref) + a_high[1] * T_ref + a_high[2] / 2.0 * T_ref**2.0 + a_high[3] / 3.0 * T_ref**3.0 + a_high[4] / 4.0 * T_ref**4.0))
+
+        # Check to see if there is a discontinuity
+        if (1 == 0):
             print("\ncheck for discontinuities:")
-            cp_low_Tswitch = a_low[0] + a_low[1]*T_switch + a_low[2]*T_switch**2.0  + a_low[3]*T_switch**3.0  + a_low[4]*T_switch**4.0
-            cp_high_Tswitch = a_high[0] + a_high[1]*T_switch + a_high[2]*T_switch**2.0  + a_high[3]*T_switch**3.0  + a_high[4]*T_switch**4.0
-            H_low_Tswitch = a_low[0]*T_switch + a_low[1]/2.0*T_switch**2.0 + a_low[2]/3.0*T_switch**3.0  + a_low[3]/4.0*T_switch**4.0  + a_low[4]/5.0*T_switch**5.0 + a_low[5]
-            H_high_Tswitch = a_high[0]*T_switch + a_high[1]/2.0*T_switch**2.0 + a_high[2]/3.0*T_switch**3.0  + a_high[3]/4.0*T_switch**4.0  + a_high[4]/5.0*T_switch**5.0 + a_high[5]
-            S_low_Tswitch = a_low[0]*np.log(T_switch) + a_low[1]*T_switch + a_low[2]/2.0*T_switch**2.0  + a_low[3]/3.0*T_switch**3.0  + a_low[4]/4.0*T_switch**4.0 + a_low[6]
-            S_high_Tswitch = a_high[0]*np.log(T_switch) + a_high[1]*T_switch + a_high[2]/2.0*T_switch**2.0  + a_high[3]/3.0*T_switch**3.0  + a_high[4]/4.0*T_switch**4.0 + a_high[6]    
+            cp_low_Tswitch = a_low[0] + a_low[1] * T_switch + a_low[2] * T_switch**2.0 + a_low[3] * T_switch**3.0 + a_low[4] * T_switch**4.0
+            cp_high_Tswitch = a_high[0] + a_high[1] * T_switch + a_high[2] * T_switch**2.0 + a_high[3] * T_switch**3.0 + a_high[4] * T_switch**4.0
+            H_low_Tswitch = a_low[0] * T_switch + a_low[1] / 2.0 * T_switch**2.0 + a_low[2] / 3.0 * T_switch**3.0 + a_low[3] / 4.0 * T_switch**4.0 + a_low[4] / 5.0 * T_switch**5.0 + a_low[5]
+            H_high_Tswitch = a_high[0] * T_switch + a_high[1] / 2.0 * T_switch**2.0 + a_high[2] / 3.0 * T_switch**3.0 + a_high[3] / 4.0 * T_switch**4.0 + a_high[4] / 5.0 * T_switch**5.0 + a_high[5]
+            S_low_Tswitch = a_low[0] * np.log(T_switch) + a_low[1] * T_switch + a_low[2] / 2.0 * T_switch**2.0 + a_low[3] / 3.0 * T_switch**3.0 + a_low[4] / 4.0 * T_switch**4.0 + a_low[6]
+            S_high_Tswitch = a_high[0] * np.log(T_switch) + a_high[1] * T_switch + a_high[2] / 2.0 * T_switch**2.0 + a_high[3] / 3.0 * T_switch**3.0 + a_high[4] / 4.0 * T_switch**4.0 + a_high[6]
 
-            print("discontinuity at T_switch for Cp/R is %.4F"%(cp_low_Tswitch - cp_high_Tswitch))
-            print("discontinuity at T_switch for H/R is %.4F"%(H_low_Tswitch - H_high_Tswitch))   
-            print("discontinuity at T_switch for S/R is %.4F"%(S_low_Tswitch - S_high_Tswitch))        
-        
-        #line = '\n\t !cut and paste this value into the cti file!\n'
+            print("discontinuity at T_switch for Cp/R is %.4F" % (cp_low_Tswitch - cp_high_Tswitch))
+            print("discontinuity at T_switch for H/R is %.4F" % (H_low_Tswitch - H_high_Tswitch))
+            print("discontinuity at T_switch for S/R is %.4F" % (S_low_Tswitch - S_high_Tswitch))
+
+        # line = '\n\t !cut and paste this value into the cti file!\n'
         line = '\tthermo = (\n'
-        line += "\t\tNASA( [%.1F, %.1F], [%.8E, %.8E,\n \t\t %.8E, %.8E, %.8E,\n \t\t %.8E, %.8E]), \n"%(300.0, 1000.0, a_low[0], a_low[1], a_low[2], a_low[3], a_low[4], a_low[5], a_low[6])
-        line += "\t\tNASA( [%.1F, %.1F], [%.8E, %.8E,\n \t\t %.8E, %.8E, %.8E,\n \t\t %.8E, %.8E]), \n"%(1000.0, max(self.temperatures), a_high[0], a_high[1], a_high[2], a_high[3], a_high[4], a_high[5], a_high[6])
+        line += "\t\tNASA( [%.1F, %.1F], [%.8E, %.8E,\n \t\t %.8E, %.8E, %.8E,\n \t\t %.8E, %.8E]), \n" % (300.0, 1000.0, a_low[0], a_low[1], a_low[2], a_low[3], a_low[4], a_low[5], a_low[6])
+        line += "\t\tNASA( [%.1F, %.1F], [%.8E, %.8E,\n \t\t %.8E, %.8E, %.8E,\n \t\t %.8E, %.8E]), \n" % (1000.0, max(self.temperatures), a_high[0], a_high[1], a_high[2], a_high[3], a_high[4], a_high[5], a_high[6])
         line += "\t\t ),\n"
 
         # molecule.thermo_lines = line
@@ -306,22 +306,22 @@ class AdsorbateThermoCalc:
         for i in range(len(self.temperatures)):
             if self.temperatures[i] == T_switch:
                 i_switch = i
-        
+
         cp_fit = np.zeros(len(self.temperatures))
         h_fit = np.zeros(len(self.temperatures))
         s_fit = np.zeros(len(self.temperatures))
-        for (i,temp) in enumerate(self.temperatures):
+        for (i, temp) in enumerate(self.temperatures):
             if temp <= T_switch:
-                cp_fit[i] = a_low[0] + a_low[1]*temp + a_low[2]*temp**2.0  + a_low[3]*temp**3.0  + a_low[4]*temp**4.0
-                h_fit[i] = a_low[0]*temp + a_low[1]/2.0*temp**2.0 + a_low[2]/3.0*temp**3.0  + a_low[3]/4.0*temp**4.0  + a_low[4]/5.0*temp**5.0 + a_low[5]
-                s_fit[i] = a_low[0]*np.log(temp) + a_low[1]*temp + a_low[2]/2.0*temp**2.0  + a_low[3]/3.0*temp**3.0  + a_low[4]/4.0*temp**4.0 + a_low[6]
+                cp_fit[i] = a_low[0] + a_low[1] * temp + a_low[2] * temp**2.0 + a_low[3] * temp**3.0 + a_low[4] * temp**4.0
+                h_fit[i] = a_low[0] * temp + a_low[1] / 2.0 * temp**2.0 + a_low[2] / 3.0 * temp**3.0 + a_low[3] / 4.0 * temp**4.0 + a_low[4] / 5.0 * temp**5.0 + a_low[5]
+                s_fit[i] = a_low[0] * np.log(temp) + a_low[1] * temp + a_low[2] / 2.0 * temp**2.0 + a_low[3] / 3.0 * temp**3.0 + a_low[4] / 4.0 * temp**4.0 + a_low[6]
             else:
-                cp_fit[i] = a_high[0] + a_high[1]*temp + a_high[2]*temp**2.0  + a_high[3]*temp**3.0  + a_high[4]*temp**4.0
-                h_fit[i] = a_high[0]*temp + a_high[1]/2.0*temp**2.0 + a_high[2]/3.0*temp**3.0  + a_high[3]/4.0*temp**4.0  + a_high[4]/5.0*temp**5.0 + a_high[5]
-                s_fit[i] = a_high[0]*np.log(temp) + a_high[1]*temp + a_high[2]/2.0*temp**2.0  + a_high[3]/3.0*temp**3.0  + a_high[4]/4.0*temp**4.0 + a_high[6]
+                cp_fit[i] = a_high[0] + a_high[1] * temp + a_high[2] * temp**2.0 + a_high[3] * temp**3.0 + a_high[4] * temp**4.0
+                h_fit[i] = a_high[0] * temp + a_high[1] / 2.0 * temp**2.0 + a_high[2] / 3.0 * temp**3.0 + a_high[3] / 4.0 * temp**4.0 + a_high[4] / 5.0 * temp**5.0 + a_high[5]
+                s_fit[i] = a_high[0] * np.log(temp) + a_high[1] * temp + a_high[2] / 2.0 * temp**2.0 + a_high[3] / 3.0 * temp**3.0 + a_high[4] / 4.0 * temp**4.0 + a_high[6]
 
-        cp_fit *= R        
-        h_fit *= R  
-        s_fit *= R  
+        cp_fit *= R
+        h_fit *= R
+        s_fit *= R
 
         return cp_fit, h_fit, s_fit
