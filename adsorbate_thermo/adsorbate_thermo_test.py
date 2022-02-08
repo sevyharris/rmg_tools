@@ -16,8 +16,10 @@ class AdsorbateThermoTest(unittest.TestCase):
         A method that is run before all unit tests in this class.
         """
         molecular_weight = 18.02  # H2O
+        composition = {'H': 2, 'O': 1, 'C': 0, 'N': 0}
         frequencies = [49.5, 68.6, 73.6, 102.0, 437.6, 452.9, 1596.3, 3675.6, 3787.0]
-        cls.adsorbate_thermo = adsorbate_thermo.AdsorbateThermoCalc(molecular_weight, frequencies, twoD_gas=True)
+        heat_of_formation_0K = -295.05
+        cls.adsorbate_thermo = adsorbate_thermo.AdsorbateThermoCalc(molecular_weight, frequencies, composition, heat_of_formation_0K, twoD_gas=True)
 
     def test_get_translation_thermo(self):
         """
@@ -45,22 +47,27 @@ class AdsorbateThermoTest(unittest.TestCase):
         Check values of Q_vib, S_vib, dH_vib, Cv_vib
         """
         Q_vib, S_vib, dH_vib, Cv_vib = self.adsorbate_thermo.get_vibrational_thermo()
-        self.assertAlmostEqual(Q_vib[0, 0], 11.034963254025913)
-        self.assertAlmostEqual(Q_vib[45, 0], 130.32233489549847)
-        self.assertAlmostEqual(Q_vib[-2, 0], 6018.728683338621)
+        self.assertAlmostEqual(Q_vib[0], 11.034963254025913)
+        self.assertAlmostEqual(Q_vib[45], 130.32233489549847)
+        self.assertAlmostEqual(Q_vib[-2], 6018.728683338621)
 
-        self.assertAlmostEqual(S_vib[0, 0], 38.07225504419116)
-        self.assertAlmostEqual(S_vib[45, 0], 67.49815326008806)
-        self.assertAlmostEqual(S_vib[-2, 0], 110.22104390942083)
+        self.assertAlmostEqual(S_vib[0], 38.07225504419116)
+        self.assertAlmostEqual(S_vib[45], 67.49815326008806)
+        self.assertAlmostEqual(S_vib[-2], 110.22104390942083)
 
-        # self.assertAlmostEqual(dH_vib[0, 0], 5399.089968555581)
-        # self.assertAlmostEqual(dH_vib[45, 0], 19984.872272678833)
-        # self.assertAlmostEqual(dH_vib[-2, 0], 75347.8861223393)
+        self.assertAlmostEqual(dH_vib[0], 5399.089968555581)
+        self.assertAlmostEqual(dH_vib[45], 19984.872272678833)
+        self.assertAlmostEqual(dH_vib[-2], 75347.8861223393)
 
-        self.assertAlmostEqual(Cv_vib[0, 0], 28.074698286767678)
-        self.assertAlmostEqual(Cv_vib[45, 0], 36.77745028228141)
-        self.assertAlmostEqual(Cv_vib[-2, 0], 49.93125232130692)
+        self.assertAlmostEqual(Cv_vib[0], 28.074698286767678)
+        self.assertAlmostEqual(Cv_vib[45], 36.77745028228141)
+        self.assertAlmostEqual(Cv_vib[-2], 49.93125232130692)
 
+    def test_get_thermo(self):
+        """
+        Check values of Q_vib, S_vib, dH_vib, Cv_vib
+        """
+        pass
 
 
 if __name__ == '__main__':
