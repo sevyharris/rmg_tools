@@ -142,8 +142,9 @@ class AdsorbateThermoCalc:
         Cp = Cp_trans + Cv_vib  # see comments in each section regarding Cp vs Cv
         heat_of_formation_298K = self.heat_of_formation_0K + dH[0] - heat_of_formation_correction
         H = heat_of_formation_298K + dH - dH[0]
+        self.S1 = S
 
-        a_low, a_high = self.fit_NASA1(Cp, H, S)
+        a_low, a_high = self.fit_NASA2(Cp, H, S)
 
         index298 = list(self.temperatures).index(298.15)
 
@@ -151,7 +152,7 @@ class AdsorbateThermoCalc:
         Tdata = rmgpy.quantity.Quantity(self.temperatures, 'K')
         Cpdata = rmgpy.quantity.Quantity(Cp, 'kJ/(mol*K)'),
         H298 = rmgpy.quantity.Quantity(H[index298], 'kJ/mol'),
-        S298 = rmgpy.quantity.Quantity(S[index298], 'J/(mol*K)'),
+        S298 = rmgpy.quantity.Quantity(S[index298], 'kJ/(mol*K)'),
 
         # Cp0 = self.get_Cp0()
         # CpInf = self.get_CpInf()
@@ -162,6 +163,7 @@ class AdsorbateThermoCalc:
             frequencies = frequencies[2:]
 
         CpInf = rmgpy.quantity.Quantity(R * len(frequencies), 'kJ/(mol*K)'),
+        # CpInf = rmgpy.quantity.Quantity(R * len(self.frequencies), 'kJ/(mol*K)'),
 
         Tmin = np.min(self.temperatures)
         Tmax = np.max(self.temperatures)
@@ -174,58 +176,42 @@ class AdsorbateThermoCalc:
             S298=S298,
             Cp0=Cp0,
             CpInf=CpInf,
-            # Tmin=Tmin,
-            # Tmax=Tmax,
-            # E0=None,
-            # label = '',
-            # comment=''
         )
-        # print(my_data)
         nasa = my_data.to_nasa(Tmin, Tmax, Tint)
-        # print(nasa)
+        return nasa
 
-        # import rmgpy.thermo.wilhoit
-        # my_thermo = rmgpy.thermo.wilhoit.Wilhoit()
-        # Tdata = self.temperatures
-        # Cpdata = Cp
-        # # Tdata = np.ndarray(self.temperatures)
-        # # Cpdata = np.ndarray(Cp)
-        # Cp0 = Cp[0]  # TODO fix these values
-        # CpInf = Cp[-1]
-        # H298 = heat_of_formation_298K
-        # S298 = S[0]
+    def get_thermo2(self):
+        # katrin's notebook
+        # call the subroutine for the vibrational partition function
+        Q_trans, S_trans, Cp_trans, dH_trans = self.get_translation_thermo()
+        Q_vib, S_vib, dH_vib, Cv_vib = self.get_vibrational_thermo()
 
-        # my_thermo.fit_to_data(
-        #     Tdata,
-        #     Cpdata,
-        #     Cp0,
-        #     CpInf,
-        #     H298,
-        #     S298,
-        # )
+        # now compute the correction to the heat of formation as you go from 0 to 298 K
+        # TODO figure out where this came from
+        h_correction = 4.234  # kJ/mol. enthalpy_H(298) - enthalpy_H(0)
+        c_correction = 1.051  # kJ/mol. enthalpy_C(298) - enthalpy_C(0)
+        n_correction = 4.335  # kJ/mol. enthalpy_N(298) - enthalpy_N(0)
+        o_correction = 4.340  # kJ/mol. enthalpy_O(298) - enthalpy_O(0)
+        heat_of_formation_correction = 0.0
+        heat_of_formation_correction += self.composition['H'] * h_correction
+        heat_of_formation_correction += self.composition['C'] * c_correction
+        heat_of_formation_correction += self.composition['N'] * n_correction
+        heat_of_formation_correction += self.composition['O'] * o_correction
 
-        # Tint = 1000.0
-        # nasa = my_thermo.to_nasa(
-        #     Tmin,
-        #     Tmax,
-        #     Tint
-        # )
-        # print('done?')
-        # fit NASA polynomial
+        # note that the partition function is the production of the individual terms,
+        # whereas the thermodynamic properties are additive
+        Q = Q_trans * Q_vib
+        S = S_trans + S_vib
+        dH = dH_trans + dH_vib
+        Cp = Cp_trans + Cv_vib  # see comments in each section regarding Cp vs Cv
+        heat_of_formation_298K = self.heat_of_formation_0K + dH[0] - heat_of_formation_correction
+        H = heat_of_formation_298K + dH - dH[0]
+        self.S2 = S
 
-        # print(molecule.heat_of_formation_298K)
-        # print(molecule.H[0])
-        # #This writes H_298, S_298 and appropriate indices of Cp to file (preparation for computing adsorption corrections)
-        # g = open("Pt_thermodata_adsorbates.py",'a+')
-        # g.write('[' + str(molecule.name) + ', Cpdata:, ' +  str(molecule.Cp[np.where(temperature==300)]*239.0057)[1:-1] + ', ' + str(molecule.Cp[np.where(temperature==400)]*239.0057)[1:-1] + ', '+ str(molecule.Cp[np.where(temperature==500)]*239.0057)[1:-1] + ', ' + str(molecule.Cp[np.where(temperature==600)]*239.0057)[1:-1] + ', ' + str(molecule.Cp[np.where(temperature==800)]*239.0057)[1:-1] + ', ' + str(molecule.Cp[np.where(temperature==1000)]*239.0057)[1:-1] + ', ' + str(molecule.Cp[np.where(temperature==1500)]*239.0057)[1:-1] + ', ' + ",'cal/(mol*K)', H298, " + str(molecule.H[0]*0.2390057) + ", 'kcal/mol', S298, " + str(molecule.S[0]*239.0057) + ", 'cal/(mol*K)']")
-        # g.write('\n')
-        # g.close()
+        a_low, a_high = self.fit_NASA2(Cp, H, S)
+        return a_low, a_high
 
-        # now that we've computed the thermo properties, go ahead and fit them to a NASA polynomial
-        # fit_NASA(temperature, molecule)
-        # format_output(molecule)
-
-    def fit_NASA1(self, Cp, H, S,):
+    def fit_NASA2(self, Cp, H, S,):
 
         heat_capacity = Cp
         reference_enthalpy = H[0]
@@ -299,7 +285,7 @@ class AdsorbateThermoCalc:
         # molecule.a_low = a_low
         # molecule.a_high = a_high
 
-    def get_thermo_from_NASA1(self, a_low, a_high):
+    def get_thermo_from_NASA2(self, a_low, a_high):
         # compute thermo properties from nasa polynomials
 
         i_switch = -1
