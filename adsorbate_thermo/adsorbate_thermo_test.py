@@ -16,9 +16,9 @@ class AdsorbateThermoTest(unittest.TestCase):
         A method that is run before all unit tests in this class.
         """
         molecular_weight = 18.02  # H2O
-        composition = {'H': 2, 'O': 1, 'C': 0, 'N': 0}
+        composition = {'H': 2, 'O': 1, 'C': 0, 'N': 0, 'Pt': 1}
         frequencies = [49.5, 68.6, 73.6, 102.0, 437.6, 452.9, 1596.3, 3675.6, 3787.0]
-        heat_of_formation_0K = -295.05
+        heat_of_formation_0K = -259.05
         cls.adsorbate_thermo = adsorbate_thermo.AdsorbateThermoCalc(molecular_weight, frequencies, composition, heat_of_formation_0K, twoD_gas=True)
 
     def test_get_translation_thermo(self):
@@ -65,9 +65,14 @@ class AdsorbateThermoTest(unittest.TestCase):
 
     def test_get_thermo(self):
         """
-        Check values of Q_vib, S_vib, dH_vib, Cv_vib
+        Check the NASA polynomials
         """
-        pass
+        nasa = self.adsorbate_thermo.get_thermo()
+        a_low = [1253.2, 18.899, -0.0390199, 3.98049e-05, -1.52948e-08, -24879.5, 20.1649]
+        a_high = [4092.47, 1.56959, 0.000643606, -5.4255e-07, 9.64746e-11, -397031, -12477.9]
+
+        np.testing.assert_array_almost_equal(nasa.polynomials[0].coeffs, a_low, 1)
+        np.testing.assert_array_almost_equal(nasa.polynomials[1].coeffs, a_high, 1)
 
 
 if __name__ == '__main__':

@@ -13,13 +13,6 @@ Avogadro = rmgpy.constants.Na
 pi = np.pi
 invcm_to_invm = 1.0E2
 
-# print(f'R={R}')
-# print(f'kB={kB}')
-# print(f'h={h}')
-# print(f'c={c}')
-# print(f'amu={amu}')
-# print(f'Avogadro={Avogadro}')
-
 
 T_switch = 1000.0
 
@@ -65,25 +58,33 @@ class AdsorbateThermoCalc:
         pass
 
     def get_Cp0(self):
-        units = h * c / kB * invcm_to_invm
+        # TODO verify this
+        # units = h * c / kB * invcm_to_invm
 
+        # frequencies = self.frequencies  # TODO check sorted
+        # if self.twoD_gas:  # skip the first two if we do 2D gas
+        #     frequencies = frequencies[2:]
+
+        # Cv_vib = 0
+        # temp = 0.0
+        # t = 0
+        # for (n, nu) in enumerate(self.frequencies):
+        #     # x goes to infinity
+        #     x = 1e30
+        #     Cv_vib[t] += x**2.0 * np.exp(-x) / (1.0 - np.exp(-x)) ** 2.0
+
+        # Cv_vib *= R
+        # return 0
+        return rmgpy.quantity.Quantity(R, 'kJ/(mol*K)')
+
+    def get_CpInf(self):
+        # used wolfram alpha to get limits
+        # TODO verify this
         frequencies = self.frequencies  # TODO check sorted
         if self.twoD_gas:  # skip the first two if we do 2D gas
             frequencies = frequencies[2:]
 
-        Cv_vib = 0
-        temp = 0.0
-        t = 0
-        for (n, nu) in enumerate(self.frequencies):
-            # x goes to infinity
-            x = 1e30
-            Cv_vib[t] += x**2.0 * np.exp(-x) / (1.0 - np.exp(-x)) ** 2.0
-
-        Cv_vib *= R
-        return 0
-
-    def get_CpInf(self):
-        return 0
+        return rmgpy.quantity.Quantity(R * len(frequencies), 'kJ/(mol*K)')
 
     def get_translation_thermo(self):
         # Just using the area is not a function of temperature equations
@@ -144,8 +145,6 @@ class AdsorbateThermoCalc:
         H = heat_of_formation_298K + dH - dH[0]
         self.S1 = S
 
-        a_low, a_high = self.fit_NASA2(Cp, H, S)
-
         index298 = list(self.temperatures).index(298.15)
 
         import rmgpy.quantity
@@ -154,16 +153,8 @@ class AdsorbateThermoCalc:
         H298 = rmgpy.quantity.Quantity(H[index298], 'kJ/mol'),
         S298 = rmgpy.quantity.Quantity(S[index298], 'kJ/(mol*K)'),
 
-        # Cp0 = self.get_Cp0()
-        # CpInf = self.get_CpInf()
-        # used wolfram alpha to get limits
-        Cp0 = rmgpy.quantity.Quantity(R, 'kJ/(mol*K)'),
-        frequencies = self.frequencies  # TODO check sorted
-        if self.twoD_gas:  # skip the first two if we do 2D gas
-            frequencies = frequencies[2:]
-
-        CpInf = rmgpy.quantity.Quantity(R * len(frequencies), 'kJ/(mol*K)'),
-        # CpInf = rmgpy.quantity.Quantity(R * len(self.frequencies), 'kJ/(mol*K)'),
+        Cp0 = self.get_Cp0()
+        CpInf = self.get_CpInf()
 
         Tmin = np.min(self.temperatures)
         Tmax = np.max(self.temperatures)
@@ -229,7 +220,7 @@ class AdsorbateThermoCalc:
         Y = YT.transpose()  # this is the desired Y
 
         b = heat_capacity[:i_switch + 1] / R
-        a_low = np.linalg.lstsq(Y, b)[0]
+        a_low = np.linalg.lstsq(Y, b, rcond=None)[0]
 
         T_ref = 298.15
         # now determine the enthalpy coefficient for the low-T region
@@ -254,7 +245,7 @@ class AdsorbateThermoCalc:
         Y = YT.transpose()  # this is the desired Y
 
         b = heat_capacity[i_switch:] / R - Cp_switch
-        a_high = np.append(a_high, np.linalg.lstsq(Y, b)[0])
+        a_high = np.append(a_high, np.linalg.lstsq(Y, b, rcond=None)[0])
         a_high[0] = Cp_switch - (a_high[0] + a_high[1] * T_switch + a_high[2] * T_switch**2.0 + a_high[3] * T_switch**3.0 + a_high[4] * T_switch**4.0)
 
         a_high = np.append(a_high, H_switch - (a_high[0] + a_high[1] / 2.0 * T_ref + a_high[2] / 3.0 * T_ref**2.0 + a_high[3] / 4.0 * T_ref**3.0 + a_high[4] / 5.0 * T_ref**4.0) * T_ref)
