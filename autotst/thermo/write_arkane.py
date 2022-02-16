@@ -23,7 +23,7 @@ species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(
     transport_path=transport_path
 )
 
-species_indices = []
+species_indices = [7, 17, 58, 68, 71, 73, 77, 79, 80, 84]
 for species_index in species_indices:
 
     conformer_dir = f"/work/westgroup/harris.se/autoscience/dft/thermo/species_{species_index:04}/conformers/"
