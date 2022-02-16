@@ -2,6 +2,7 @@
 
 import os
 import glob
+import sys
 
 import ase.io
 
@@ -37,6 +38,9 @@ species_index = 80  # 3 corresponds to n-heptane, the top species
 species_index = 79  # 3 corresponds to n-heptane, the top species
 species_index = 71  # incomplete
 species_index = 68  # incomplete
+
+species_index = int(sys.argv[1])
+
 spec_rmg = species_list[species_index]
 spec = autotst.species.Species([spec_rmg.smiles])
 
@@ -71,7 +75,7 @@ for i, cf in enumerate(spec.conformers[spec_rmg.smiles]):
 # Make a file to run Gaussian
 slurm_run_file = os.path.join(conformer_dir, 'run.sh')
 slurm_settings = {
-    '--job-name': f'g16_conformers_{species_index}',
+    '--job-name': f'g16_cf_{species_index}',
     '--error': 'error.log',
     '--output': 'output.log',
     '--nodes': 1,

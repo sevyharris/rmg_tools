@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=species_gen
+#SBATCH --job-name=spec71
 #SBATCH --error=error.log
 #SBATCH --nodes=1
 #SBATCH --mem=20Gb
@@ -7,6 +7,6 @@
 #SBATCH --mincpus=32
 
 
-python /home/harris.se/rmg/rmg_tools/autotst/thermo/species_thermo.py
+python /home/harris.se/rmg/rmg_tools/autotst/thermo/run_thermo.py 71
 
 
