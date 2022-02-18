@@ -2137,7 +2137,7 @@ OH(15)+HCO(20)=H2O(8)+CO(6)                         3.011000e+13 0.000     0.000
 ! Library reaction: CurranPentane
 ! Flux pairs: CH3(19), CH2(24); OH(15), H2O(8); 
 OH(15)+CH3(19)=H2O(8)+CH2(24)                       4.293000e+04 2.568     3.998    
-DUPLICATE
+! DUPLICATE
 
 ! Reaction index: Chemkin #114; RMG #166
 ! Library reaction: CurranPentane
