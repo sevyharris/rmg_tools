@@ -95,7 +95,7 @@ slurm_settings = {
     '--mem': '20Gb',
     '--time': '24:00:00',
     '--cpus-per-task': 16,
-    '--array': f'0-{n_conformers}%40',
+    '--array': f'0-{n_ts}%40',
 }
 
 slurm_file_writer = job_manager.SlurmJobFile(
@@ -119,8 +119,10 @@ slurm_file_writer.write_file()
 # submit the job
 gaussian_conformers_job = job_manager.SlurmJob()
 slurm_cmd = f"sbatch {slurm_run_file}"
+start_dir = os.getcwd()
+os.chdir(ts_dir)
 gaussian_conformers_job.submit(my_cmd)
-
+os.chdir(start_dir)
 
 
 

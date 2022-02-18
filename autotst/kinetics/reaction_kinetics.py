@@ -41,7 +41,7 @@ rxn_idx = 186  # R recombo
 rxn_idx = 194
 rxn_idx = 274 # first H abstraction
 
-# rxn_idx = 236 another H abstraction
+rxn_idx = 236 another H abstraction
 
 
 

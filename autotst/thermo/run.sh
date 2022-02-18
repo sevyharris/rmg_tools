@@ -7,6 +7,6 @@
 #SBATCH --mincpus=32
 
 
-python /home/harris.se/rmg/rmg_tools/autotst/thermo/run_thermo.py 71
+python /home/harris.se/rmg/rmg_tools/autotst/thermo/species_thermo.py 71
 
 
