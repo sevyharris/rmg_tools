@@ -4,3 +4,5 @@ __pycache__/
 uncertainty/nheptane/chemkin/
 *.png
 slurm*
+pyteck
+
