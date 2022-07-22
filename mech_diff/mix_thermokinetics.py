@@ -10,15 +10,49 @@ import rmgpy.thermo.thermodata
 import rmgpy.quantity
 
 
+def mix_kinetics(reaction0, reaction1, w):
+    # function to mix reaction 0 and reaction 1 according to weight (a slider from 0-1)
+    # 0 is all reaction 0 and 1 is all reaction 1
+
+    # Use the RMG thermo object rmgpy.thermo.nasa.NASA
+
+    kinetics0 = reaction0.kinetics
+    kinetics1 = reaction1.kinetics
+
+    assert type(kinetics0) == rmgpy.kinetics.arrhenius.Arrhenius
+    assert type(kinetics1) == rmgpy.kinetics.arrhenius.Arrhenius
+
+    try:
+        Tmin = np.maximum(kinetics0.Tmin.value, kinetics1.Tmin.value)
+    except AttributeError:
+        Tmin = 300
+    try:
+        Tmax = np.minimum(kinetics0.Tmax.value, kinetics1.Tmax.value)
+    except AttributeError:
+        Tmax = 3000
+
+    N_total = 1001
+    Tdata = np.linspace(Tmin, Tmax, N_total)
+    kdata = np.zeros(N_total)
+    lnkdata = np.zeros(N_total)
+    for i, T in enumerate(Tdata):
+        lnkdata[i] = w * np.log(kinetics0.get_rate_coefficient(T)) + (1.0 - w) * np.log(kinetics1.get_rate_coefficient(T))
+        kdata[i] = np.exp(lnkdata[i])
+
+    # get the units
+    kunits = rmgpy.kinetics.model.get_rate_coefficient_units_from_reaction_order(len(reaction0.reactants))
+
+    mixed_kinetics = rmgpy.kinetics.arrhenius.Arrhenius()
+    mixed_kinetics.fit_to_data(Tdata, kdata, kunits)
+
+    return mixed_kinetics
+
+
 def mix_thermo(species0, species1, w):
     # function to mix species 0 and species 1 according to weight (a slider from 0-1)
     # 0 is all species 0 and 1 is all species 1
 
     # Use the RMG thermo object rmgpy.thermo.nasa.NASA
-
-    # My idea for getting this to work is to refit a NASA polynomial using a weighting implemented by adding more points to the fit
-    # for example, a 0.1 will lead to 100 points from thermo0 and 1000 points from thermo1
-    # As long as this is approximate, I think it will have the desired effect
 
     thermo0 = species0.thermo
     thermo1 = species1.thermo
@@ -36,10 +70,7 @@ def mix_thermo(species0, species1, w):
     # put 298 in first position - I know, this is erasing one of the Tdata's but I don't care
     # ThermoData is requiring that this be greater than 298 for some reason
     Tdata[0] = 300.0
-    if w < 0.5:
-        Cpdata[0] = thermo0.get_heat_capacity(Tdata[0])
-    else:
-        Cpdata[0] = thermo1.get_heat_capacity(Tdata[0])
+    Cpdata[0] = w * thermo0.get_heat_capacity(Tdata[0]) + (1.0 - w) * thermo1.get_heat_capacity(Tdata[0])
 
     Tdata = rmgpy.quantity.Quantity(Tdata, 'K')
     Cpdata = rmgpy.quantity.Quantity(Cpdata, 'J/(mol*K)'),
@@ -68,6 +99,21 @@ def mix_thermo(species0, species1, w):
         Tint = (Tmax + Tmin) / 2.0
     nasa = my_data.to_nasa(Tmin, Tmax, Tint)
     return nasa
+
+
+def plot_kinetics(kinetics, labels=None):
+    plt.xlabel('1000 / T (K^-1)')
+    plt.ylabel('ln(k)')
+
+    T = np.linspace(300, 3000, 1001)
+    for kinetic in kinetics:
+        k = np.zeros(len(T))
+        for i in range(0, len(T)):
+            k[i] = kinetic.get_rate_coefficient(T[i])
+        plt.plot(1000.0 / T, np.log(k))
+
+    plt.legend(labels)
+    plt.show()
 
 
 def plot_thermos(thermos, labels=None):
@@ -105,9 +151,8 @@ def plot_thermos(thermos, labels=None):
     plt.show()
 
 
-if __name__ == '__main__':
-    # Loading example
-    print('Loading ethane example')
+def test_thermo_mix():
+    print('Loading ethane thermo example')
 
     matplotlib.use('TkAgg')
 
@@ -124,3 +169,28 @@ if __name__ == '__main__':
     plot_thermos(
         [sp4.thermo, sp5.thermo, thermo4p5], labels=[str(sp4), str(sp5), 'mix']
     )
+
+
+def test_kinetics_mix():
+    print('Loading ethane kinetics example')
+
+    matplotlib.use('TkAgg')
+
+    # load an rmg/chemkin model just for reaction/species objects to play with
+    chemkin_path = '/home/moon/rmg/my_examples/ethane/chemkin/chem_annotated.inp'
+    dictionary_path = '/home/moon/rmg/my_examples/ethane/chemkin/species_dictionary.txt'
+    transport_path = '/home/moon/rmg/my_examples/ethane/chemkin/tran.dat'
+    species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(chemkin_path, dictionary_path=dictionary_path, transport_path=transport_path)
+
+    rxn4 = reaction_list[4]
+    rxn5 = reaction_list[5]
+
+    rxn4p5 = mix_kinetics(rxn4, rxn5, w=0.5)
+    plot_kinetics(
+        [rxn4.kinetics, rxn5.kinetics, rxn4p5], labels=[str(rxn4), str(rxn5), 'mix']
+    )
+
+
+if __name__ == '__main__':
+    test_thermo_mix()
+    test_kinetics_mix()
