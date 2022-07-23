@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
+import cantera as ct
 
 import rmgpy.chemkin
 import rmgpy.thermo.thermodata
@@ -18,6 +19,11 @@ def mix_kinetics(reaction0, reaction1, w):
 
     kinetics0 = reaction0.kinetics
     kinetics1 = reaction1.kinetics
+
+    if w == 0.0:
+        return kinetics0
+    elif w == 1.0:
+        return kinetics1
 
     assert type(kinetics0) == rmgpy.kinetics.arrhenius.Arrhenius
     assert type(kinetics1) == rmgpy.kinetics.arrhenius.Arrhenius
@@ -56,6 +62,11 @@ def mix_thermo(species0, species1, w):
 
     thermo0 = species0.thermo
     thermo1 = species1.thermo
+
+    if w == 0.0:
+        return thermo0
+    elif w == 1.0:
+        return thermo0
 
     Tmin = np.maximum(thermo0.Tmin.value, thermo1.Tmin.value)
     Tmax = np.minimum(thermo0.Tmax.value, thermo1.Tmax.value)
