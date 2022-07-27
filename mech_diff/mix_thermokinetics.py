@@ -25,6 +25,7 @@ def mix_kinetics(reaction0, reaction1, w):
     elif w == 1.0:
         return kinetics1
 
+    # print(type(kinetics0))
     assert type(kinetics0) == rmgpy.kinetics.arrhenius.Arrhenius
     assert type(kinetics1) == rmgpy.kinetics.arrhenius.Arrhenius
 
@@ -41,12 +42,14 @@ def mix_kinetics(reaction0, reaction1, w):
     Tdata = np.linspace(Tmin, Tmax, N_total)
     kdata = np.zeros(N_total)
     lnkdata = np.zeros(N_total)
+    P = 101325.0
     for i, T in enumerate(Tdata):
-        lnkdata[i] = w * np.log(kinetics0.get_rate_coefficient(T)) + (1.0 - w) * np.log(kinetics1.get_rate_coefficient(T))
+        lnkdata[i] = w * np.log(reaction0.get_rate_coefficient(T, P)) + (1.0 - w) * np.log(reaction1.get_rate_coefficient(T, P))
         kdata[i] = np.exp(lnkdata[i])
 
     # get the units
-    kunits = rmgpy.kinetics.model.get_rate_coefficient_units_from_reaction_order(len(reaction0.reactants))
+    # kunits = rmgpy.kinetics.model.get_rate_coefficient_units_from_reaction_order(len(reaction1.reactants))
+    kunits = reaction1.kinetics.A.units
 
     mixed_kinetics = rmgpy.kinetics.arrhenius.Arrhenius()
     mixed_kinetics.fit_to_data(Tdata, kdata, kunits)
