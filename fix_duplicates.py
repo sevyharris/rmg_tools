@@ -45,7 +45,10 @@ def mark_as_duplicate(reaction_number):
     # figure out where to insert
     rxn1_line = reactions[reaction_number][0]
     for a in range(rxn1_line + 1, min(rxn1_line + 20, len(lines))):
-        if lines[a].strip()[-1] == '/':
+        if lines[a].strip() == '':
+            lines.insert(a, 'DUPLICATE\n')
+            break
+        elif lines[a].strip()[-1] == '/':
             continue
         else:
             lines.insert(a, 'DUPLICATE\n')
