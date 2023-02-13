@@ -14,6 +14,59 @@ import rmgpy.quantity
 def mix_kinetics(reaction0, reaction1, w):
     # function to mix reaction 0 and reaction 1 according to weight (a slider from 0-1)
     # 0 is all reaction 0 and 1 is all reaction 1
+    # this method fits the kinetics to the a set of points a fraction w of the way between reactions 0 and 1
+
+    # note, you'll get better results if you just change the parameters a little at a time...
+
+    # Use the RMG thermo object rmgpy.thermo.nasa.NASA
+
+    kinetics0 = reaction0.kinetics
+    kinetics1 = reaction1.kinetics
+
+    if w == 0.0:
+        return kinetics0
+    elif w == 1.0:
+        return kinetics1
+
+    # print(type(kinetics0))
+    assert type(kinetics0) == rmgpy.kinetics.arrhenius.Arrhenius
+    assert type(kinetics1) == rmgpy.kinetics.arrhenius.Arrhenius
+    assert reaction0.kinetics.A.units == reaction1.kinetics.A.units
+    assert reaction0.kinetics.n.units == reaction1.kinetics.n.units
+    assert reaction0.kinetics.Ea.units == reaction1.kinetics.Ea.units
+
+    N = 1001
+    As = np.logspace(
+        np.log10(reaction0.kinetics.A.value),
+        np.log10(reaction1.kinetics.A.value),
+        N
+    )
+
+    ns = np.linspace(
+        reaction0.kinetics.n.value,
+        reaction1.kinetics.n.value,
+        N
+    )
+
+    Eas = np.linspace(
+        reaction0.kinetics.Ea.value,
+        reaction1.kinetics.Ea.value,
+        N
+    )
+
+    i = int(w * (N - 1))
+    mixed_rxn = rmgpy.kinetics.arrhenius.Arrhenius(
+        A=(As[i], reaction0.kinetics.A.units),
+        n=(ns[i], reaction0.kinetics.n.units),
+        Ea=(Eas[i], reaction0.kinetics.Ea.units)
+    )
+
+    return mixed_rxn
+
+
+def mix_kinetics_retired(reaction0, reaction1, w):
+    # function to mix reaction 0 and reaction 1 according to weight (a slider from 0-1)
+    # 0 is all reaction 0 and 1 is all reaction 1
 
     # Use the RMG thermo object rmgpy.thermo.nasa.NASA
 
