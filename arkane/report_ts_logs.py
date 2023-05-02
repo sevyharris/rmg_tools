@@ -5,7 +5,6 @@ import arkane.ess.gaussian
 
 
 log_search_string = sys.argv[1]
-
 log_files = glob.glob(log_search_string)
 
 energies = []
@@ -15,7 +14,13 @@ best_option = None
 lowest_energy = 1e10
 
 for logfile in log_files:
-    g_reader = arkane.ess.gaussian.GaussianLog(logfile)
+    try:
+        g_reader = arkane.ess.gaussian.GaussianLog(logfile)
+    except arkane.exceptions.LogError:
+        energies.append(lowest_energy)
+        valid_TS.append(False)
+        continue
+
     energy = g_reader.load_energy()
     energies.append(energy)
 
@@ -23,12 +28,11 @@ for logfile in log_files:
     freq = g_reader.load_negative_frequency()
     if freq < -500:
         valid_TS.append(True)
+        if energy < lowest_energy:
+            lowest_energy = energy
+            best_option = logfile
     else:
         valid_TS.append(False)
-
-    if energy < lowest_energy:
-        lowest_energy = energy
-        best_option = logfile
 
 # print the results of each TS
 for i, logfile in enumerate(log_files):
