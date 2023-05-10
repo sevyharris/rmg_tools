@@ -16,6 +16,7 @@ lowest_energy = 1e10
 for logfile in log_files:
     try:
         g_reader = arkane.ess.gaussian.GaussianLog(logfile)
+        freq = g_reader.load_negative_frequency()
     except arkane.exceptions.LogError:
         energies.append(lowest_energy)
         valid_TS.append(False)
@@ -25,7 +26,6 @@ for logfile in log_files:
     energies.append(energy)
 
     # get a list of the vibrational frequencies
-    freq = g_reader.load_negative_frequency()
     if freq < -500:
         valid_TS.append(True)
         if energy < lowest_energy:

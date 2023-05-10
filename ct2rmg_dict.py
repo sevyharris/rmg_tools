@@ -29,7 +29,7 @@ species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(
     transport_path=transport,
     use_chemkin_names=True
 )
-base_gas = ct.Solution(f'{chemkin[:-4]}.inp')
+base_gas = ct.Solution(f'{chemkin[:-4]}.cti')
 output_pickle_file = os.path.join(working_dir, 'ct2rmg_rxn.pickle')
 
 

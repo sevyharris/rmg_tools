@@ -3,7 +3,8 @@
 import sys
 
 gaussian_file = sys.argv[1]
-new_file = gaussian_file[:-4] + '_fixed' + gaussian_file[-4:]
+# new_file = gaussian_file[:-4] + '_fixed' + gaussian_file[-4:]
+new_file = gaussian_file
 
 lines_with_rot_const = []
 with open(gaussian_file, 'r') as f:
