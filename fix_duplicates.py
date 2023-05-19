@@ -71,10 +71,10 @@ for i in range(0, len(reaction_names)):
         # if reaction_names[i] == reaction_names[j]:
         if same_reaction(reaction_names[i], reaction_names[j]):
             duplicates.append((j, i))
-            print('Found duplicates:')
-            print('\t', reaction_names[i])
-            print('\t', reaction_names[j])
-            print()
+            #print('Found duplicates:')
+            #print('\t', reaction_names[i])
+            #print('\t', reaction_names[j])
+            #print()
             duplicate_names.add(reaction_names[j])
             duplicate_names.add(reaction_names[i])
 
@@ -106,9 +106,9 @@ def marked_duplicate(reaction_number):
 def mark_as_duplicate(reaction_number):
     # figure out where to insert
 
-    print('Marking duplicate:')
-    print('\t', lines[reactions[reaction_number][0]])
-    print()
+    #print('Marking duplicate:')
+    #print('\t', lines[reactions[reaction_number][0]])
+    #print()
     rxn1_line = reactions[reaction_number][0]
     for a in range(rxn1_line + 1, min(rxn1_line + 20, len(lines))):
         if lines[a].strip() == '':
