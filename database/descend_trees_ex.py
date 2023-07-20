@@ -57,10 +57,10 @@ rxn.reactants[1].molecule[0].atoms[0].label = '*3'
 rxn.reactants[1].molecule[0].atoms[2].label = '*2'
 
 
-rxn.reactants[0].molecule[0].get_all_labeled_atoms()
+# rxn.reactants[0].molecule[0].get_all_labeled_atoms()
 
 
-rxn.reactants[1].molecule[0].get_all_labeled_atoms()
+# rxn.reactants[1].molecule[0].get_all_labeled_atoms()
 
 
 ref_db.kinetics.families['Disproportionation'].get_reaction_template(rxn)
