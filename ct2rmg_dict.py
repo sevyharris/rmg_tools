@@ -21,6 +21,7 @@ def same_reaction(rmg_rxn, ct_rxn):
 
 # load the cantera and chemkin files: assumes they have the same base name and are in the same folder
 chemkin = sys.argv[1]
+
 working_dir = os.path.dirname(chemkin)
 transport = os.path.join(working_dir, 'tran.dat')
 species_dict = os.path.join(working_dir, 'species_dictionary.txt')
@@ -49,15 +50,24 @@ if os.path.exists(output_pickle_file):
 
 
 def get_corresepondence(ct_index):
-    try:
-        if same_reaction(reaction_list[ct_index], base_gas.reactions()[ct_index]):
-            return ct_index
-    except IndexError:
-        pass
 
-    for j in range(len(reaction_list)):
+    start_guess = min(ct_index, len(reaction_list))
+
+    # Assume from previous runs that the RMG index is always smaller than the Cantera index
+    # so search backwards first from the current index
+    for j in range(start_guess)[::-1]:
         if same_reaction(reaction_list[j], base_gas.reactions()[ct_index]):
             return j
+
+    # finish searching through the range
+    for j in range(start_guess, len(reaction_list)):
+        if same_reaction(reaction_list[j], base_gas.reactions()[ct_index]):
+            return j
+
+    # search through in regular order
+    # for j in range(len(reaction_list)):
+    #     if same_reaction(reaction_list[j], base_gas.reactions()[ct_index]):
+    #         return j
     return -1
 
 
