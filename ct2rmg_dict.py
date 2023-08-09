@@ -9,6 +9,7 @@ import cantera as ct
 import rmgpy.chemkin
 
 
+MAX_WORKERS = 16
 def same_reaction(rmg_rxn, ct_rxn):
     rmg_r = set([str(x) for x in rmg_rxn.reactants])
     rmg_p = set([str(x) for x in rmg_rxn.products])
@@ -29,7 +30,15 @@ species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(
     transport_path=transport,
     use_chemkin_names=True
 )
-base_gas = ct.Solution(f'{chemkin[:-4]}.cti')
+
+if os.path.exists(f'{chemkin[:-4]}.yaml'):
+    base_gas = ct.Solution(f'{chemkin[:-4]}.yaml')
+elif os.path.exists(f'{chemkin[:-4]}.cti'):    
+    base_gas = ct.Solution(f'{chemkin[:-4]}.cti')
+else:
+    print('no Cantera file?')
+    exit(1)
+
 output_pickle_file = os.path.join(working_dir, 'ct2rmg_rxn.pickle')
 
 
@@ -56,7 +65,7 @@ ct2rmg_rxn = {}
 
 # do it in parallel
 ct_indices = np.arange(0, len(base_gas.reactions()))
-with concurrent.futures.ProcessPoolExecutor(max_workers=32) as executor:
+with concurrent.futures.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
     for ct_index, rmg_index in zip(ct_indices, executor.map(
         get_corresepondence,
         ct_indices
