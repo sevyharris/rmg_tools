@@ -161,17 +161,88 @@ def delete_duplicate_mark(reaction_number):
             reaction_number += 1
 
 
+def comment_out_reaction(reaction_number):
+
+    # if marked_duplicate(reaction_number):
+    #     delete_duplicate_mark(reaction_number)
+    rxn1_line = reactions[reaction_number][0]
+    print(f'modifying: {lines[rxn1_line]}')
+    lines[rxn1_line] = '! ' + lines[rxn1_line]
+
+    if 'DUPLICATE' in lines[rxn1_line + 1]:
+        lines[rxn1_line + 1] = '! ' + lines[rxn1_line + 1]
+
+
+
 # Add missing DUPLICATE markers
 for pair in duplicates:
     if not marked_duplicate(pair[0]):
-        mark_as_duplicate(pair[0])
-    if not marked_duplicate(pair[1]):
-        mark_as_duplicate(pair[1])
+
+        # delete pair 1
+        comment_out_reaction(pair[1])
+        print(pair[1])
+
+        # mark_as_duplicate(pair[0])
+    # if not marked_duplicate(pair[1]):
+    #     mark_as_duplicate(pair[1])
 
 # Get rid of incorrectly marked duplicates
 for i in range(0, len(reactions)):
     if marked_duplicate(i) and reaction_names[i] not in duplicate_names:
         delete_duplicate_mark(i)
+
+# need to delete blocks that all start with ! -- only start after the reactions block begins
+rxn1_line = reactions[0][0]
+del_lines = []
+for i in range(rxn1_line, len(lines) - 1):
+# for i in range(rxn1_line, 1420):
+    
+    # find blank line with stuff after it
+    if lines[i].strip() == '' and lines[i + 1].strip() != '':
+        # print(f'blank {i}  {lines[i]}')
+        # print(f'block {i + 1}  {lines[i + 1]}')
+
+        # find the next blank line, checking if all things start with !
+        all_comments = True
+        for j in range(i + 1, len(lines)):
+            if lines[j].strip() == '':
+                break
+            if lines[j].strip()[0] != '!':
+                all_comments = False
+        
+
+
+        if all_comments:
+            print(f'Found all comments block on line {i + 1}')
+            for k in range(i + 1, j):
+                del_lines.append(k)
+    
+for k in del_lines:
+    lines[k] = '\n'
+            
+
+
+    #     for j in range(i + 2, len(lines)):
+    #         # find the next blank line after some not blank lines
+    #         if lines[j].strip() == '' and lines[j - 1].strip() != '':
+    #             # if all the lines are comments, mark them for deletion
+    #             # delete_block = True
+    #             for k in range(i + 1, j):
+    #                 if lines[k].strip() == '':
+    #                     print(f'I did this wrong:')
+    #                     print(f'i{i}:{lines[i]}')
+    #                     print(f'k{k}:{lines[k]}')
+    #                     print(f'j{j}:{lines[j]}')
+    #                 if lines[k].strip()[0] != '!':
+    #                     # delete_block = False
+    #                     break
+    #             else:
+    #                 # delete the block
+    #                 for k in range(i + 1, j):
+    #                     # lines[k] = '\n'
+    #                     del_lines.append(k)
+    # for k in del_lines:
+    #     lines[k] = '\n'
 
 # save the fixed file
 chemkin_file_out = chemkin_file[:-4] + '_fixed' + chemkin_file[-4:]
