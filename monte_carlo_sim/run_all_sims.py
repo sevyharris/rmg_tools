@@ -1,6 +1,6 @@
 # script to set up many simulations
-# import pandas as pd
-# import pickle
+import os
+import sys
 import numpy as np
 import cantera as ct
 import concurrent.futures
@@ -9,9 +9,6 @@ import rmgpy.chemkin
 import rmgpy.species
 import rmgpy.tools.canteramodel
 import rmgpy.constants
-# # from rmgpy.tools.globaluncertainty import ReactorPCEFactory
-# from rmgpy.tools.globaldelayuncertainty import ReactorPCEFactory
-# import rmgpy.tools.uncertainty_gao
 
 
 k_perturbation_matrix = None
@@ -95,25 +92,20 @@ def run_simulation(condition_index, perturbation_index=0):
     return delay
 
 
-
 # decide which chunk of the random sampling to handle
-sample_start_index = 0
+sample_start_index = int(sys.argv[1])
 
-
-# first, read in the model
-chemkin_file = '/home/moon/hw8/bill_green_kinetics/project/base24_analysis/chem_annotated.inp'
-dict_file = '/home/moon/hw8/bill_green_kinetics/project/base24_analysis/species_dictionary.txt'
-transport = '/home/moon/hw8/bill_green_kinetics/project/base24_analysis/tran.dat'
-
-cti_path = '/home/moon/hw8/bill_green_kinetics/project/base24_analysis/chem_annotated.yaml'
-
+# read in the model
+basedir = '/home/harris.se/bill_green_kinetics/project/base24_analysis'
+chemkin_file = os.path.join(basedir, 'chem_annotated.inp')
+dict_file = os.path.join(basedir, 'species_dictionary.txt')
+transport = os.path.join(basedir, 'tran.dat')
 
 # load the uncertainty values so we know how much to perturb each parameter
-species_uncertainty_file = '/home/moon/hw8/bill_green_kinetics/project/base24_analysis/delta_Gs.npy'
-reaction_uncertainty_file = '/home/moon/hw8/bill_green_kinetics/project/base24_analysis/delta_ks.npy'
-delta_ks = np.load(reaction_uncertainty_file)
+species_uncertainty_file = os.path.join(basedir, 'delta_Gs.npy')
+reaction_uncertainty_file = os.path.join(basedir, 'delta_ks.npy')
 delta_Gs = np.load(species_uncertainty_file)
-
+delta_ks = np.load(reaction_uncertainty_file)
 
 species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(chemkin_file, dictionary_path=dict_file, transport_path=transport)
 
@@ -143,22 +135,25 @@ reaction_time_list = ([500], 'ms')
 
 # Generate the perturbations
 np.random.seed(400)
-N_perturbations = 2
+N_total = 10000
+N_chunk = 1000
 G_means = np.zeros(len(species_list))
 k_means = np.zeros(len(reaction_list))
 delta_Gs_J_per_mol = delta_Gs * 4184
-k_perturbation_matrix = np.random.normal(k_means, delta_ks, (N_perturbations, len(reaction_list))).transpose()  # only perturb A Factor
-G_perturbation_matrix = np.random.normal(G_means, delta_Gs_J_per_mol, (N_perturbations, len(species_list))).transpose()
+k_perturbation_matrix = np.random.normal(k_means, delta_ks, (N_total, len(reaction_list))).transpose()  # only perturb A Factor
+G_perturbation_matrix = np.random.normal(G_means, delta_Gs_J_per_mol, (N_total, len(species_list))).transpose()
 
 
-total_delays = np.zeros((N_perturbations, len(experimental_Ts)))
-for i in range(0, N_perturbations):  # do 1000 samples
+total_delays = np.zeros((N_chunk, len(experimental_Ts)))
+for i in range(0, N_chunk):  # do 1000 samples
+
+    perturb_index = sample_start_index + i
 
     # Run 16 simulations in parallel
     delays = np.zeros(len(experimental_Ts))
     condition_indices = np.arange(0, len(experimental_Ts))
     with concurrent.futures.ProcessPoolExecutor(max_workers=len(experimental_Ts)) as executor:
-        for condition_index, delay_time in zip(condition_indices, executor.map(run_simulation, condition_indices, [i] * len(condition_indices))):
+        for condition_index, delay_time in zip(condition_indices, executor.map(run_simulation, condition_indices, [perturb_index] * len(condition_indices))):
             delays[condition_index] = delay_time
     total_delays[i, :] = delays
 
