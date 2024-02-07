@@ -20,6 +20,48 @@ reactant_structures = {'1,2_XY_interchange': [1, 1], '1,2_shiftS': [1, 1], '1,4_
 # Is surface bidentate dissocation [3, 1] or [2, 1]? 3 sites
 
 
+# load the entire database
+thermo_libs = [
+        'primaryThermoLibrary',
+    ]
+
+thermo_library_path = os.path.join(rmgpy.settings['database.directory'], 'thermo')
+thermo_database = rmgpy.data.thermo.ThermoDatabase()
+thermo_database.load(
+    thermo_library_path,
+    libraries=thermo_libs
+)
+
+# load the families
+ref_library_path = os.path.join(rmgpy.settings['database.directory'], 'kinetics')
+kinetics_database = rmgpy.data.kinetics.KineticsDatabase()
+kinetics_database.load(
+    ref_library_path,
+    libraries=[],
+    families='all'
+)
+
+ref_db = rmgpy.data.rmg.RMGDatabase()
+ref_db.kinetics = kinetics_database
+ref_db.thermo = thermo_database
+
+
+def get_rmg_mol(smile):
+    smiles_conversions = {
+        "[CH]": "[CH...]",
+        "CARBONMONOXIDE": "[C-]#[O+]",
+    }
+
+    if smile.upper() in list(smiles_conversions.keys()):
+        smile = smiles_conversions[smile.upper()]
+
+    if 'Pt' or 'X' in smile:
+        smile = smile.replace('Pt', 'X')
+        return rmgpy.molecule.Molecule(smiles=smile)  # don't generate resonance structures for surface species
+
+    return rmgpy.molecule.Molecule(smiles=smile).generate_resonance_structures()
+
+
 def is_isomorphic_to_resonance_structures(mol1, mol2):
     """
     Checks if the two molecules are isomorphic to each other
@@ -50,15 +92,7 @@ def relabel1_1(input_r, family):
     # if family == 'Singlet_Carbene_Intra_Disproportionation':
     #     print(family)
     # copied from AutoTST.autotst.reaction.py
-    def get_rmg_mol(smile):
-        smiles_conversions = {
-            "[CH]": "[CH...]",
-            "CARBONMONOXIDE": "[C-]#[O+]"
-        }
-
-        if smile.upper() in list(smiles_conversions.keys()):
-            smile = smiles_conversions[smile.upper()]
-        return rmgpy.molecule.Molecule(smiles=smile).generate_resonance_structures()
+    
 
     rmg_reactants = [get_rmg_mol(sp.smiles) for sp in input_reaction.reactants]
     rmg_products = [get_rmg_mol(sp.smiles) for sp in input_reaction.products]
@@ -99,19 +133,11 @@ def relabel1_1(input_r, family):
 
 
 def relabel2_1(input_r, family):
+    if family == 'Surface_Adsorption_Single':
+        print('This is the one')
+
     # 2 reactants and 1 product
     input_reaction = copy.deepcopy(input_r)
-
-    # copied from AutoTST.autotst.reaction.py
-    def get_rmg_mol(smile):
-        smiles_conversions = {
-            "[CH]": "[CH...]",
-            "CARBONMONOXIDE": "[C-]#[O+]"
-        }
-
-        if smile.upper() in list(smiles_conversions.keys()):
-            smile = smiles_conversions[smile.upper()]
-        return rmgpy.molecule.Molecule(smiles=smile).generate_resonance_structures()
 
     if len(input_r.reactants) == 2 and len(input_r.products) == 1:
         rmg_reactants = [get_rmg_mol(sp.smiles) for sp in input_reaction.reactants]
@@ -121,12 +147,8 @@ def relabel2_1(input_r, family):
         rmg_products = [get_rmg_mol(sp.smiles) for sp in input_reaction.reactants]
     else:
         raise ValueError('How did this function get called?')
-
-    combos_to_try = list(itertools.product(
-        list(itertools.product(*rmg_reactants)),
-        list(itertools.product(*rmg_products))
-    ))
-
+    combos_to_try = ((rmg_reactants, rmg_products), (rmg_reactants[::-1], rmg_products))
+ 
     for rmg_reactants, rmg_products in combos_to_try:
 
         test_reaction = rmgpy.reaction.Reaction(
@@ -169,17 +191,6 @@ def relabel1_2(input_r, family):
     # 1 reactant and 2 product
     input_reaction = copy.deepcopy(input_r)
 
-    # copied from AutoTST.autotst.reaction.py
-    def get_rmg_mol(smile):
-        smiles_conversions = {
-            "[CH]": "[CH...]",
-            "CARBONMONOXIDE": "[C-]#[O+]"
-        }
-
-        if smile.upper() in list(smiles_conversions.keys()):
-            smile = smiles_conversions[smile.upper()]
-        return rmgpy.molecule.Molecule(smiles=smile).generate_resonance_structures()
-
     if len(input_r.reactants) == 1 and len(input_r.products) == 2:
         rmg_reactants = [get_rmg_mol(sp.smiles) for sp in input_reaction.reactants]
         rmg_products = [get_rmg_mol(sp.smiles) for sp in input_reaction.products]
@@ -189,10 +200,7 @@ def relabel1_2(input_r, family):
     else:
         raise ValueError('How did this function get called?')
 
-    combos_to_try = list(itertools.product(
-        list(itertools.product(*rmg_reactants)),
-        list(itertools.product(*rmg_products))
-    ))
+    combos_to_try = ((rmg_reactants, rmg_products), (rmg_reactants, rmg_products[::-1]))
 
     for rmg_reactants, rmg_products in combos_to_try:
 
@@ -234,17 +242,6 @@ def relabel1_2(input_r, family):
 
 def relabel2_2(input_r, family):
     input_reaction = copy.deepcopy(input_r)
-
-    # copied from AutoTST.autotst.reaction.py
-    def get_rmg_mol(smile):
-        smiles_conversions = {
-            "[CH]": "[CH...]",
-            "CARBONMONOXIDE": "[C-]#[O+]"
-        }
-
-        if smile.upper() in list(smiles_conversions.keys()):
-            smile = smiles_conversions[smile.upper()]
-        return rmgpy.molecule.Molecule(smiles=smile).generate_resonance_structures()
 
     rmg_reactants = [get_rmg_mol(sp.smiles) for sp in input_reaction.reactants]
     rmg_products = [get_rmg_mol(sp.smiles) for sp in input_reaction.products]
@@ -318,7 +315,7 @@ def get_family(reaction):
 
     valid_families = []
     for family in possible_families:
-        # print(f'Checking {family}')
+        print(f'Checking {family}')
         my_family = ref_db.kinetics.families[family]
 
         if n_reactants == 2 and n_products == 2:
@@ -333,6 +330,7 @@ def get_family(reaction):
             raise NotImplementedError("This reaction has an unsupported number of reactants and products.")
 
         if test_rxn is False:
+            print(f'Failed {family}\n')
             continue
 
         try:
