@@ -14,7 +14,7 @@ if mech_file.endswith('.inp'):
     species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(mech_file, sp_dict)
     print(f'Loaded Chemkin File: {mech_file}')
     print(f'Model contains {len(species_list)} species and {len(reaction_list)} reactions')
-elif mech_file.endswith('.cti') or mech_file.endswitch('.yaml'):
+elif mech_file.endswith('.cti') or mech_file.endswith('.yaml'):
     # read in the cantera file
     gas = ct.Solution(mech_file)
     print(f'Loaded Cantera File: {mech_file}')
