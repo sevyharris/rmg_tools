@@ -46,7 +46,7 @@ def plot_thermos(thermos, labels=None):
     ax[2].set_title('Heat Capacity vs. Temperature')
     T = np.linspace(300, 3000, 1001)
     for m, thermo in enumerate(thermos):
-        if 'cantera' in str(type(thermo)).lower() and 'species' in str(type(thermo)).lower():
+        if 'cantera' in str(type(thermo)).lower() and hasattr(thermo, 'thermo'):
             thermo = thermo.thermo
         H = np.zeros(len(T))
         S = np.zeros(len(T))
