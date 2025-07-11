@@ -25,7 +25,6 @@ import matplotlib.pyplot as plt
 # %matplotlib inline
 
 # +
-
 # Define Propane as a Species object
 # -
 
@@ -166,19 +165,5 @@ plt.legend()
 # -
 
 
-
-library
-
-entry.item
-
-entry.label
-
-entry.data
-
-
-
-
-
-dir(my_thermo_data)
 
 
