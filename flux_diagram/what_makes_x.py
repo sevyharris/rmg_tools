@@ -13,14 +13,12 @@
 #     name: python3
 # ---
 
-# +
 import cantera as ct
 import pydot
 import os
 import numpy as np
+import copy
 
-
-# -
 
 def get_i_thing(ref_composition, phase):
     for i in range(phase.n_species):
@@ -86,6 +84,8 @@ class Node():
         self.name = name
         self.index = index
         self.edges = []
+    def __repr__(self):
+        return self.name
     def add_edge(self, edge):
         edge_indices = [e.index for e in self.edges]
         if edge.index not in edge_indices:
@@ -128,6 +128,7 @@ for i in range(gas.n_reactions):
 species_image_dir = '/home/moon/rmg/RMG-Py/examples/rmg/ethane-oxidation/chemkin/species_images/'
 
 
+# +
 def get_similar_edge_index(edge_list, this_edge):
     this_src = this_edge.get_source()
     this_dest = this_edge.get_destination()
@@ -139,6 +140,276 @@ def get_similar_edge_index(edge_list, this_edge):
             return i
     
     return None
+
+def get_similar_node_index(node_list, this_node):
+    this_name = this_node.get_name()
+    for i in range(len(node_list)):
+        compare_name = node_list[i].get_name()
+        if this_name == compare_name:
+            return i
+    
+    return None
+# -
+
+
+
+
+
+RATE_FLUX_TOL = 1e-9
+SPEC_CONC_TOL = 1e-8
+MAX_SPEC_CONC = np.max(X)
+MAX_FLUX = np.max(np.abs(rates))
+MAX_NODE_PEN_WIDTH = 9
+MAX_EDGE_PEN_WIDTH = 9
+SLOPE_NODE = -MAX_NODE_PEN_WIDTH / np.log10(SPEC_CONC_TOL)
+SLOPE_EDGE = -MAX_EDGE_PEN_WIDTH / np.log10(RATE_FLUX_TOL)
+
+
+# +
+def make_single_graph(nodes, edges, t, X, rates):
+    # returns pydot graph at a given time slice, we'll then combine all of these together for each time slice to keep things in place
+    
+    graph = pydot.Dot('flux_diagram', graph_type='digraph', overlap="false")
+    
+    pydot_nodes = []
+    for node in nodes:
+        if node.edges == []:
+            continue
+    
+        spec_conc = X[t, node.index] / MAX_SPEC_CONC
+        if spec_conc < SPEC_CONC_TOL:
+            node_penwidth = 0.0
+        else:
+            node_penwidth = round(SLOPE_NODE * np.log10(spec_conc) + MAX_NODE_PEN_WIDTH, 3)
+    
+        pydot_node = pydot.Node(name=node.name)  # , width=2.5, height=4
+        
+        # pydot_node.set_width(2.0)
+        pydot_node.set_image(os.path.join(species_image_dir, f'{node.name}.png'))
+        pydot_node.set_label('')
+        pydot_node.set_fillcolor('white')
+        pydot_node.set_color('black')
+        pydot_node.set_penwidth(node_penwidth)
+    
+        pydot_nodes.append(pydot_node)
+        graph.add_node(pydot_node)
+    
+    unique_edges = []
+    edge_indices_plotted = []
+    pydot_edges = []
+    for edge in edges:
+        # if edge.index in edge_indices_plotted:
+        #     continue
+        # edge_indices_plotted.append(edge.index)
+        # unique_edges.append(edge)
+        pydot_edge = pydot.Edge(edge.r_node.name, edge.p_node.name)
+        # use edge label to store flux
+        flux = rates[t, edge.index]
+    
+        similar_index = get_similar_edge_index(graph.get_edges(), pydot_edge)
+        # add the new edge
+        if similar_index is None:
+             # Make new edge
+            pydot_edge.set_label(flux)
+    
+            pydot_edge.set_dir("forward")
+            if flux < 0:
+                pydot_edge.set_dir("back")
+    
+            if np.abs(flux) < RATE_FLUX_TOL:
+                # continue
+                edge_penwidth = 0.0
+                pydot_edge.set_dir("none")
+            else:
+                edge_penwidth = round(SLOPE_EDGE * np.log10(np.abs(flux)) + MAX_EDGE_PEN_WIDTH, 3)
+                # pydot_edge.set_decorate(True)
+                # pydot_edge.set_label(edge.name)
+        
+            pydot_edge.set_penwidth(edge_penwidth)
+            pydot_edges.append(pydot_edge)
+            graph.add_edge(pydot_edge)
+        else:
+            # add current edge's to existing one
+            total_flux = float(graph.get_edges()[similar_index].get_label()) + flux
+            graph.get_edges()[similar_index].set_label(total_flux)
+            graph.get_edges()[similar_index].set_dir("forward")
+            if total_flux < 0:
+                graph.get_edges()[similar_index].set_dir("back")
+        
+            if np.abs(total_flux) < RATE_FLUX_TOL:
+                continue
+                edge_penwidth = 0.0
+                graph.get_edges()[similar_index].set_dir("none")
+            else:
+                edge_penwidth = round(SLOPE_EDGE * np.log10(np.abs(total_flux)) + MAX_EDGE_PEN_WIDTH, 3)
+                # pydot_edge.set_decorate(True)
+                # pydot_edge.set_label(edge.name)
+            graph.get_edges()[similar_index].set_penwidth(edge_penwidth)
+    
+    # reset the labels at the end
+    for e in graph.get_edges():
+        e.set_label('')
+    
+    return graph
+    # # # General purpose graph settings
+    # graph.set_nodesep(0.11)
+    # graph.set_ranksep(0.35)
+    # graph.set_rankdir('LR')
+    # graph.write_png(f'example_{t:04}.png')
+
+# assert len(unique_edges) == gas.n_reactions
+
+
+# -
+
+DOWNSAMPLE = 4
+my_times = np.arange(X.shape[0])[::DOWNSAMPLE]
+if X.shape[0] - 1 not in my_times:
+    my_times = np.concatenate((my_times, [X.shape[0] - 1]))
+
+
+
+# +
+supergraph = pydot.Dot('flux_diagram', graph_type='digraph', overlap="false")
+
+
+for t in my_times:
+    # print(t)
+    subgraph = make_single_graph(nodes, edges, t, X, rates)
+    # for e in subgraph.get_edges():
+    #     print(e)
+        
+    
+    # add in new nodes
+    for i in range(len(subgraph.get_nodes())):
+        similar_node_index = get_similar_node_index(supergraph.get_nodes(), subgraph.get_nodes()[i])
+        if similar_node_index is None:
+            supergraph.add_node(subgraph.get_nodes()[i])
+    # add in new edges
+    for i in range(len(subgraph.get_edges())):
+        similar_edge_index = get_similar_edge_index(supergraph.get_edges(), subgraph.get_edges()[i])
+        if similar_edge_index is None:
+            s_node = subgraph.get_edges()[i].get_source()
+            d_node = subgraph.get_edges()[i].get_destination()
+            new_edge = pydot.Edge(s_node, d_node)
+            supergraph.add_edge(new_edge)
+
+
+# make everything blank to start the template
+for i in range(len(supergraph.get_nodes())):
+    # not sure there's anything to do for nodes
+    pass
+    # supergraph.get_nodes()[i].set_label
+
+for i in range(len(supergraph.get_edges())):
+    supergraph.get_edges()[i].set_label(0)
+    supergraph.get_edges()[i].set_penwidth(0)
+    supergraph.get_edges()[i].set_dir("none")
+# -
+
+
+
+# # build the graph from the supergraph
+
+for t in my_times:
+
+    graph = copy.deepcopy(supergraph)
+    
+    
+    
+    pydot_nodes = []
+    for node in nodes:
+        if node.edges == []:
+            continue
+        pydot_node = pydot.Node(name=node.name)  # , width=2.5, height=4
+        i = get_similar_node_index(graph.get_nodes(), pydot_node)
+        assert i is not None
+                                   
+        spec_conc = X[t, node.index] / MAX_SPEC_CONC
+        if spec_conc < SPEC_CONC_TOL:
+            node_penwidth = 0.0
+        else:
+            node_penwidth = round(SLOPE_NODE * np.log10(spec_conc) + MAX_NODE_PEN_WIDTH, 3)
+    
+        # pydot_node.set_width(2.0)
+        graph.get_nodes()[i].set_image(os.path.join(species_image_dir, f'{node.name}.png'))
+        graph.get_nodes()[i].set_label('')
+        graph.get_nodes()[i].set_fillcolor('white')
+        graph.get_nodes()[i].set_color('black')
+        graph.get_nodes()[i].set_penwidth(node_penwidth)
+    
+    
+    for edge in edges:
+        # if edge.index in edge_indices_plotted:
+        #     continue
+        # edge_indices_plotted.append(edge.index)
+        # unique_edges.append(edge)
+        pydot_edge = pydot.Edge(edge.r_node.name, edge.p_node.name)
+        # use edge label to store flux
+        flux = rates[t, edge.index]
+    
+        similar_index = get_similar_edge_index(graph.get_edges(), pydot_edge)
+    
+        assert similar_index is not None, str(pydot_edge)
+        # add current edge's to existing one
+        total_flux = float(graph.get_edges()[similar_index].get_label()) + flux
+        graph.get_edges()[similar_index].set_label(total_flux)
+        graph.get_edges()[similar_index].set_dir("forward")
+        if total_flux < 0:
+            graph.get_edges()[similar_index].set_dir("back")
+    
+        if np.abs(total_flux) < RATE_FLUX_TOL:
+            continue
+            edge_penwidth = 0.0
+            graph.get_edges()[similar_index].set_dir("none")
+        else:
+            edge_penwidth = round(SLOPE_EDGE * np.log10(np.abs(total_flux)) + MAX_EDGE_PEN_WIDTH, 3)
+            # pydot_edge.set_decorate(True)
+            # pydot_edge.set_label(edge.name)
+        # if edge_penwidth < 2.0:
+        #     graph.get_edges()[similar_index].set_dir("none")
+        #     graph.get_edges()[similar_index].set_arrowsize(0)
+        #     graph.get_edges()[similar_index].set_arrowhead("none")
+        #     graph.get_edges()[similar_index].set_color("white")
+            
+        graph.get_edges()[similar_index].set_penwidth(edge_penwidth)
+    
+    
+    # reset the labels at the end
+    for e in graph.get_edges():
+        e.set_label('')
+    
+    for e in graph.get_edges():
+        if e.get_penwidth() < 0.001:
+            e.set_dir("none")
+        e.set_label('')
+
+
+    time_node = pydot.Node(name=f'time={times[t]:0.4f} s')
+    time_node.set_
+    graph.add_node()
+    # # # General purpose graph settings
+    # graph.set_nodesep(0.11)
+    # graph.set_ranksep(0.35)
+    # graph.set_rankdir('LR')
+    graph.write_png(f'example_{t:04}.png')
+    # graph.write_dot(f'example_{t:04}.dot')
+
+times
+
+pydot_edge.set_arrowhead("none")
+
+
+
+edge.r_node
+
+edge.p_node
+
+for g in graph.get_edges():
+    print(g)
+
+graph.get_nodes()
+
 
 
 # +
