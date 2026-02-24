@@ -1,0 +1,578 @@
+generator: ck2yaml
+input-files: [chem_annotated.inp, tran.dat]
+cantera-version: 2.6.0
+date: Thu, 22 May 2025 13:26:26 -0400
+
+units: {length: cm, time: s, quantity: mol, activation-energy: kcal/mol}
+
+phases:
+- name: gas
+  thermo: ideal-gas
+  elements: [H, D, T, C, Ci, O, Oi, N, Ne, Ar, He, Si, S, F, Cl, Br, I,
+    X]
+  species: [Ar, He, Ne, N2, ethane(1), O2(2), C(4), '[CH3](5)', 'C[CH2](6)',
+    '[H](7)', '[O](12)', '[OH](14)', C2H4(17), '[H][H](22)', O(41)]
+  kinetics: gas
+  transport: mixture-averaged
+  state: {T: 300.0, P: 1 atm}
+
+elements:
+- symbol: Ci
+  atomic-weight: 13.003
+- symbol: D
+  atomic-weight: 2.014
+- symbol: Oi
+  atomic-weight: 17.999
+- symbol: T
+  atomic-weight: 3.016
+- symbol: X
+  atomic-weight: 195.083
+
+species:
+- name: Ar
+  composition: {Ar: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 6000.0]
+    data:
+    - [2.5, 0.0, 0.0, 0.0, 0.0, -745.375, 4.37967]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: atom
+    well-depth: 136.5
+    diameter: 3.33
+    note: NOx2018
+  note: Ar
+- name: He
+  composition: {He: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 6000.0]
+    data:
+    - [2.5, 0.0, 0.0, 0.0, 0.0, -745.375, 0.928724]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: atom
+    well-depth: 10.2
+    diameter: 2.576
+    note: NOx2018
+  note: He
+- name: Ne
+  composition: {Ne: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 6000.0]
+    data:
+    - [2.5, 0.0, 0.0, 0.0, 0.0, -745.375, 3.35532]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: atom
+    well-depth: 148.6
+    diameter: 3.758
+    note: Epsilon & sigma estimated with fixed Lennard Jones Parameters.
+      This is the fallback method! Try improving transport databases!
+  note: Ne
+- name: N2
+  composition: {N: 2}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 1000.0, 6000.0]
+    data:
+    - [3.53101, -1.23661e-04, -5.02999e-07, 2.43531e-09, -1.40881e-12, -1046.98,
+      2.96747]
+    - [2.95258, 1.3969e-03, -4.92632e-07, 7.8601e-11, -4.60755e-15, -923.949,
+      5.87189]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: linear
+    well-depth: 97.53
+    diameter: 3.621
+    polarizability: 1.76
+    rotational-relaxation: 4.0
+    note: NOx2018
+  note: N2
+- name: ethane(1)
+  composition: {C: 2, H: 6}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 954.52, 5000.0]
+    data:
+    - [3.78030961, -3.24231866e-03, 5.52369186e-05, -6.38565719e-08, 2.28630182e-11,
+      -1.16203398e+04, 5.21042591]
+    - [4.58991754, 0.0141506257, -4.75953511e-06, 8.60273706e-10, -6.21699491e-14,
+      -1.27218011e+04, -3.61787544]
+    note: 'Thermo group additivity estimation: group(Cs-CsHHH) + group(Cs-CsHHH)'
+  transport:
+    model: gas
+    geometry: nonlinear
+    well-depth: 252.3
+    diameter: 4.302
+    rotational-relaxation: 1.5
+    note: NOx2018
+  note: ethane(1)
+- name: O2(2)
+  composition: {O: 2}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 1074.56, 5000.0]
+    data:
+    - [3.53732181, -1.2157093e-03, 5.31617825e-06, -4.89443423e-09, 1.45845042e-12,
+      -1038.58846, 4.68368406]
+    - [3.15382425, 1.67803802e-03, -7.6997102e-07, 1.51274714e-10, -1.087818e-14,
+      -1040.81878, 6.16753883]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: linear
+    well-depth: 107.4
+    diameter: 3.458
+    polarizability: 1.6
+    rotational-relaxation: 3.8
+    note: NOx2018
+  note: O2(2)
+- name: C(4)
+  composition: {C: 1, H: 4}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 1084.12, 5000.0]
+    data:
+    - [4.20541301, -5.35554796e-03, 2.51122401e-05, -2.13761779e-08, 5.97519672e-12,
+      -1.01619432e+04, -0.921271252]
+    - [0.908278561, 0.0114540647, -4.57172635e-06, 8.291889e-10, -5.66312625e-14,
+      -9719.98006, 13.9930217]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: nonlinear
+    well-depth: 141.4
+    diameter: 3.746
+    polarizability: 2.6
+    rotational-relaxation: 13.0
+    note: NOx2018
+  note: C(4)
+- name: '[CH3](5)'
+  composition: {C: 1, H: 3}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 1337.64, 5000.0]
+    data:
+    - [3.91546648, 1.84155497e-03, 3.48738324e-06, -3.32744005e-09, 8.4994474e-13,
+      1.62856394e+04, 0.351745642]
+    - [3.54147394, 4.76784329e-03, -1.82147095e-06, 3.28873633e-10, -2.22543257e-14,
+      1.62239499e+04, 1.66025502]
+    note: 'Thermo library: primaryThermoLibrary + radical(CH3)'
+  transport:
+    model: gas
+    geometry: nonlinear
+    well-depth: 144.0
+    diameter: 3.8
+    note: NOx2018
+  note: '[CH3](5)'
+- name: C[CH2](6)
+  composition: {C: 2, H: 5}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 900.33, 5000.0]
+    data:
+    - [3.8217747, -3.43283353e-03, 5.09227965e-05, -6.20169997e-08, 2.37053876e-11,
+      1.30660155e+04, 7.61665027]
+    - [5.15637174, 9.43093847e-03, -1.81929018e-06, 2.21154935e-10, -1.4344697e-14,
+      1.20640172e+04, -2.91189784]
+    note: 'Thermo group additivity estimation: group(Cs-CsHHH) + group(Cs-CsHHH)
+      + radical(CCJ)'
+  transport:
+    model: gas
+    geometry: nonlinear
+    well-depth: 252.3
+    diameter: 4.302
+    rotational-relaxation: 1.5
+    note: NOx2018
+  note: C[CH2](6)
+- name: '[H](7)'
+  composition: {H: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 4561.14, 5000.0]
+    data:
+    - [2.5, -2.06855e-14, 2.6626637e-17, -1.11497399e-20, 1.4354179e-24,
+      2.54742178e+04, -0.444972896]
+    - [2.50001921, -1.64942466e-08, 5.30954718e-12, -7.59275309e-16, 4.06972192e-20,
+      2.54741999e+04, -0.445095101]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: atom
+    well-depth: 145.0
+    diameter: 2.05
+    note: NOx2018
+  note: '[H](7)'
+- name: '[O](12)'
+  composition: {O: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 4561.14, 5000.0]
+    data:
+    - [2.5, -2.06855e-14, 2.6626637e-17, -1.11497399e-20, 1.4354179e-24,
+      2.92302441e+04, 5.12616427]
+    - [2.50001921, -1.64942466e-08, 5.30954718e-12, -7.59275309e-16, 4.06972192e-20,
+      2.92302262e+04, 5.12604207]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: atom
+    well-depth: 80.0
+    diameter: 2.75
+    note: NOx2018
+  note: '[O](12)'
+- name: '[OH](14)'
+  composition: {H: 1, O: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 1145.76, 5000.0]
+    data:
+    - [3.51456877, 2.92692386e-05, -5.32137e-07, 1.01945916e-09, -3.85933258e-13,
+      3414.25417, 2.10434621]
+    - [3.07193451, 6.0402425e-04, -1.39830426e-08, -2.13435187e-11, 2.48056798e-15,
+      3579.38915, 4.57803023]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: linear
+    well-depth: 80.0
+    diameter: 2.75
+    note: NOx2018
+  note: '[OH](14)'
+- name: C2H4(17)
+  composition: {C: 2, H: 4}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 940.45, 5000.0]
+    data:
+    - [3.97973256, -7.57545285e-03, 5.52967836e-05, -6.36214269e-08, 2.3176385e-11,
+      5077.46136, 4.0462697]
+    - [5.20303147, 7.82435945e-03, -2.12679592e-06, 3.7968144e-10, -2.94663097e-14,
+      3936.2659, -6.62432001]
+    note: 'Thermo group additivity estimation: group(Cds-CdsHH) + group(Cds-CdsHH)'
+  transport:
+    model: gas
+    geometry: nonlinear
+    well-depth: 280.8
+    diameter: 3.971
+    rotational-relaxation: 1.5
+    note: NOx2018
+  note: C=C(17)
+- name: '[H][H](22)'
+  composition: {H: 2}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 1959.07, 5000.0]
+    data:
+    - [3.43536405, 2.1271096e-04, -2.78626417e-07, 3.40268245e-10, -7.76034667e-14,
+      -1031.35984, -3.90841705]
+    - [2.78817312, 5.87631468e-04, 1.59014852e-07, -5.52747927e-11, 4.34317472e-15,
+      -596.148572, 0.112689431]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: linear
+    well-depth: 38.0
+    diameter: 2.92
+    polarizability: 0.79
+    rotational-relaxation: 280.0
+    note: NOx2018
+  note: '[H][H](22)'
+- name: O(41)
+  composition: {H: 2, O: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [100.0, 1130.23, 5000.0]
+    data:
+    - [4.05763517, -7.87928344e-04, 2.90875033e-06, -1.47515927e-09, 2.12831582e-13,
+      -3.02815866e+04, -0.311361652]
+    - [2.84325508, 2.75107795e-03, -7.81027306e-07, 1.07242677e-10, -5.79384413e-15,
+      -2.99586148e+04, 5.9103936]
+    note: 'Thermo library: primaryThermoLibrary'
+  transport:
+    model: gas
+    geometry: nonlinear
+    well-depth: 572.4
+    diameter: 2.605
+    dipole: 1.844
+    rotational-relaxation: 4.0
+    note: NOx2018
+  note: O(41)
+
+reactions:
+- equation: '[CH3](5) + [CH3](5) <=> ethane(1)'  # Reaction 1
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [12.87, 0.5701, -0.12, 0.01214]
+  - [-1.064, 0.8626, -0.1171, -0.01428]
+  - [-0.611, 0.4467, 0.01187, -0.02817]
+  - [-0.3223, 0.1735, 0.04674, -0.01082]
+  - [-0.1605, 0.04816, 0.03234, 3.521e-03]
+  - [-0.07566, 3.398e-03, 0.01339, 6.375e-03]
+  note: |-
+    Reaction index: Chemkin #1; RMG #23
+    PDep reaction: PDepNetwork #4
+    Flux pairs: [CH3](5), ethane(1); [CH3](5), ethane(1);
+- equation: '[CH3](5) + ethane(1) <=> C(4) + C[CH2](6)'  # Reaction 2
+  rate-constant: {A: 35.0, b: 3.44, Ea: 10.384}
+  note: |-
+    Reaction index: Chemkin #2; RMG #9
+    Template reaction: H_Abstraction
+    Flux pairs: [CH3](5), C(4); ethane(1), C[CH2](6);
+    Matched reaction 215 C2H6 + CH3_r3 <=> C2H5b + CH4 in H_Abstraction/training
+    This reaction matched rate rule [C/H3/Cs\H3;C_methyl]
+    family: H_Abstraction
+- equation: '[CH3](5) + C[CH2](6) <=> C(4) + C2H4(17)'  # Reaction 3
+  rate-constant: {A: 6.57e+14, b: -0.68, Ea: 0.0}
+  note: |-
+    Reaction index: Chemkin #3; RMG #33
+    Template reaction: Disproportionation
+    Flux pairs: C[CH2](6), C2H4(17); [CH3](5), C(4);
+    Matched reaction 5 CH3_r1 + C2H5 <=> CH4 + C2H4 in Disproportionation/training
+    This reaction matched rate rule [Root_N-4R->H_4CNOS-u1_N-1R!H->O_N-4CNOS->O_4CNS->C_1CNS->C_Sp-2R!H-1C_2R!H->C]
+    family: Disproportionation
+- equation: C[CH2](6) + C[CH2](6) <=> C2H4(17) + ethane(1)  # Reaction 4
+  rate-constant: {A: 6.9e+13, b: -0.35, Ea: 0.0}
+  note: |-
+    Reaction index: Chemkin #4; RMG #37
+    Template reaction: Disproportionation
+    Flux pairs: C[CH2](6), C2H4(17); C[CH2](6), ethane(1);
+    Matched reaction 6 C2H5 + C2H5-2 <=> C2H6 + C2H4 in Disproportionation/training
+    This reaction matched rate rule [Root_N-4R->H_4CNOS-u1_N-1R!H->O_N-4CNOS->O_Ext-4CNS-R_N-Sp-5R!H#4CCCNNNSSS_N-2R!H->S_N-5R!H->O_Sp-5CS-4CCNSS_1CNS->C]
+    family: Disproportionation
+- equation: '[H](7) + C[CH2](6) <=> ethane(1)'  # Reaction 5
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [12.75, 1.371, -0.3269, 0.01827]
+  - [-1.224, 0.8565, 0.1307, -0.08198]
+  - [-0.6219, 0.2384, 0.1281, 8.748e-03]
+  - [-0.3104, 0.04138, 0.04923, 0.0247]
+  - [-0.1439, -0.01513, 6.291e-03, 0.01429]
+  - [-0.05981, -0.02181, -7.446e-03, 3.882e-03]
+  note: |-
+    Reaction index: Chemkin #5; RMG #94
+    PDep reaction: PDepNetwork #17
+    Flux pairs: [H](7), ethane(1); C[CH2](6), ethane(1);
+- equation: '[H](7) + C[CH2](6) <=> [CH3](5) + [CH3](5)'  # Reaction 6
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [13.22, -1.029, -0.3072, 0.0124]
+  - [0.6133, 0.9072, 0.171, -0.07282]
+  - [0.02891, 0.1927, 0.1311, 0.02488]
+  - [-0.07081, -0.01164, 0.0303, 0.03011]
+  - [-0.06291, -0.04131, -0.01129, 9.962e-03]
+  - [-0.03744, -0.0259, -0.01549, -2.653e-03]
+  note: |-
+    Reaction index: Chemkin #6; RMG #95
+    PDep reaction: PDepNetwork #17
+    Flux pairs: C[CH2](6), [CH3](5); [H](7), [CH3](5);
+- equation: '[H](7) + C2H4(17) <=> C[CH2](6)'  # Reaction 7
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [11.97, 0.938, -0.18, 0.01711]
+  - [-0.1762, 0.9792, -0.01033, -0.0397]
+  - [-0.4501, 0.3446, 0.07181, -0.01147]
+  - [-0.2068, 0.07446, 0.03899, 7.058e-03]
+  - [-0.05884, -9.713e-03, 8.395e-03, 5.96e-03]
+  - [4.045e-03, -0.02051, -3.292e-03, 1.295e-03]
+  note: |-
+    Reaction index: Chemkin #7; RMG #97
+    PDep reaction: PDepNetwork #18
+    Flux pairs: [H](7), C[CH2](6); C2H4(17), C[CH2](6);
+- equation: '[H](7) + [CH3](5) <=> C(4)'  # Reaction 8
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [12.83, 1.387, -0.2572, -4.39e-03]
+  - [-0.9884, 0.6458, 0.09027, -0.03023]
+  - [-0.4769, 0.1521, 0.05277, 8.963e-03]
+  - [-0.2256, 0.03824, 0.01731, 5.391e-03]
+  - [-0.1066, 8.902e-03, 4.446e-03, 1.593e-03]
+  - [-0.04937, 1.493e-03, 8.852e-04, 3.254e-04]
+  note: |-
+    Reaction index: Chemkin #8; RMG #92
+    PDep reaction: PDepNetwork #16
+    Flux pairs: [H](7), C(4); [CH3](5), C(4);
+- equation: '[H](7) + ethane(1) <=> [H][H](22) + C[CH2](6)'  # Reaction 9
+  rate-constant: {A: 1.15e+08, b: 1.9, Ea: 7.53}
+  note: |-
+    Reaction index: Chemkin #9; RMG #81
+    Template reaction: H_Abstraction
+    Flux pairs: [H](7), [H][H](22); ethane(1), C[CH2](6);
+    Matched reaction 210 C2H6 + H <=> C2H5b + H2_p in H_Abstraction/training
+    This reaction matched rate rule [C/H3/Cs\H3;H_rad]
+    family: H_Abstraction
+- equation: '[H](7) + C[CH2](6) <=> [H][H](22) + C2H4(17)'  # Reaction 10
+  rate-constant: {A: 1.083e+13, b: 0.0, Ea: 0.0}
+  note: |-
+    Reaction index: Chemkin #10; RMG #84
+    Template reaction: Disproportionation
+    Flux pairs: C[CH2](6), C2H4(17); [H](7), [H][H](22);
+    Matched reaction 4 H + C2H5 <=> H2 + C2H4 in Disproportionation/training
+    This reaction matched rate rule [Root_4R->H_Sp-2R!H-1R!H_2R!H-u1_N-1R!H->O_1CN->C_2R!H->C]
+    family: Disproportionation
+- equation: '[H](7) + C(4) <=> [H][H](22) + [CH3](5)'  # Reaction 11
+  rate-constant: {A: 4100.0, b: 3.156, Ea: 8.755}
+  note: |-
+    Reaction index: Chemkin #11; RMG #86
+    Template reaction: H_Abstraction
+    Flux pairs: [H](7), [H][H](22); C(4), [CH3](5);
+    Matched reaction 186 CH4b + H <=> CH3_p1 + H2_p in H_Abstraction/training
+    This reaction matched rate rule [C_methane;H_rad]
+    family: H_Abstraction
+- equation: '[H](7) + [H](7) <=> [H][H](22)'  # Reaction 12
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [8.443, 1.752, -0.2297, -0.01847]
+  - [0.04049, 0.255, 0.07651, -0.02108]
+  - [-0.1096, 0.04954, 1.772e-03, -2.092e-03]
+  - [-0.04089, 0.01255, 1.907e-03, 2.168e-03]
+  - [-0.01609, 3.968e-03, 1.591e-03, 1.393e-03]
+  - [-6.217e-03, 1.465e-03, 7.025e-04, 6.059e-04]
+  note: |-
+    Reaction index: Chemkin #12; RMG #101
+    PDep reaction: PDepNetwork #19
+    Flux pairs: [H](7), [H][H](22); [H](7), [H][H](22);
+- equation: O2(2) + [H](7) <=> [O](12) + [OH](14)  # Reaction 13
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [6.745, -3.151e-04, -2.36e-04, -1.448e-04]
+  - [6.509, 1.462e-04, 1.095e-04, 6.717e-05]
+  - [0.1592, 7.486e-05, 5.606e-05, 3.439e-05]
+  - [0.05994, 4.574e-05, 3.425e-05, 2.101e-05]
+  - [0.02717, -3.258e-06, -2.438e-06, -1.495e-06]
+  - [8.564e-03, -1.986e-05, -1.487e-05, -9.119e-06]
+  note: |-
+    Reaction index: Chemkin #13; RMG #91
+    PDep reaction: PDepNetwork #15
+    Flux pairs: O2(2), [OH](14); [H](7), [O](12);
+- equation: '[O](12) + C(4) <=> [OH](14) + [CH3](5)'  # Reaction 14
+  rate-constant: {A: 4.4e+05, b: 2.5, Ea: 6.577}
+  note: |-
+    Reaction index: Chemkin #14; RMG #129
+    Template reaction: H_Abstraction
+    Flux pairs: C(4), [CH3](5); [O](12), [OH](14);
+    Matched reaction 187 CH4b + O_rad <=> CH3_p1 + OH_p23 in H_Abstraction/training
+    This reaction matched rate rule [OH_rad_H;C_methyl]
+    family: H_Abstraction
+- equation: '[O](12) + ethane(1) <=> [OH](14) + C[CH2](6)'  # Reaction 15
+  rate-constant: {A: 1.8e+05, b: 2.8, Ea: 5.8}
+  note: |-
+    Reaction index: Chemkin #15; RMG #133
+    Template reaction: H_Abstraction
+    Flux pairs: ethane(1), C[CH2](6); [O](12), [OH](14);
+    Matched reaction 211 C2H6 + O_rad <=> C2H5b + OH_p23 in H_Abstraction/training
+    This reaction matched rate rule [OH_rad_H;C_rad/H2/Cs\H3]
+    family: H_Abstraction
+- equation: '[O](12) + C[CH2](6) <=> [OH](14) + C2H4(17)'  # Reaction 16
+  rate-constant: {A: 9.03e+13, b: 0.0, Ea: 0.0}
+  note: |-
+    Reaction index: Chemkin #16; RMG #136
+    Template reaction: Disproportionation
+    Flux pairs: [O](12), [OH](14); C[CH2](6), C2H4(17);
+    Estimated from node Root_N-4R->H_N-4CNOS-u1_N-1R!H->O_Sp-2R!H-1CNS_1CNS->C_2R!H->C
+    Multiplied by reaction path degeneracy 3.0
+- equation: '[O](12) + [H][H](22) <=> [H](7) + [OH](14)'  # Reaction 17
+  rate-constant: {A: 3.4e+08, b: 1.5, Ea: 22.95}
+  note: |-
+    Reaction index: Chemkin #17; RMG #139
+    Template reaction: H_Abstraction
+    Flux pairs: [H][H](22), [H](7); [O](12), [OH](14);
+    Matched reaction 285 H2 + O_rad <=> HO + H in H_Abstraction/training
+    This reaction matched rate rule [OH_rad_H;H_rad]
+    family: H_Abstraction
+- equation: '[O](12) + [H](7) <=> [OH](14)'  # Reaction 18
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [9.521, 2.322, -0.1002, -0.03487]
+  - [-0.6362, 0.04313, 0.04294, 0.03026]
+  - [-0.1356, 0.02563, 0.01482, 2.425e-03]
+  - [-0.04959, 6.105e-03, 1.503e-03, -2.68e-03]
+  - [-0.02032, 8.585e-04, -1.848e-04, -9.752e-04]
+  - [-8.4e-03, 2.267e-04, 4.478e-05, -3.502e-05]
+  note: |-
+    Reaction index: Chemkin #18; RMG #153
+    PDep reaction: PDepNetwork #31
+    Flux pairs: [O](12), [OH](14); [H](7), [OH](14);
+- equation: '[OH](14) + ethane(1) <=> O(41) + C[CH2](6)'  # Reaction 19
+  rate-constant: {A: 1.61e+06, b: 2.224, Ea: 0.741}
+  note: |-
+    Reaction index: Chemkin #19; RMG #125
+    Template reaction: H_Abstraction
+    Flux pairs: [OH](14), O(41); ethane(1), C[CH2](6);
+    Matched reaction 212 C2H6 + OH <=> C2H5b + H2O_p in H_Abstraction/training
+    This reaction matched rate rule [C/H3/Cs\H3;O_pri_rad]
+    family: H_Abstraction
+- equation: '[OH](14) + C[CH2](6) <=> O(41) + C2H4(17)'  # Reaction 20
+  rate-constant: {A: 7.23e+13, b: 0.0, Ea: 0.0}
+  note: |-
+    Reaction index: Chemkin #20; RMG #131
+    Template reaction: Disproportionation
+    Flux pairs: C[CH2](6), C2H4(17); [OH](14), O(41);
+    Matched reaction 13 HO + C2H5 <=> H2O + C2H4 in Disproportionation/training
+    This reaction matched rate rule [Root_N-4R->H_4CNOS-u1_N-1R!H->O_4CNOS->O_Sp-2R!H-1CNS_1CNS->C_2R!H->C]
+    family: Disproportionation
+- equation: '[OH](14) + C(4) <=> O(41) + [CH3](5)'  # Reaction 21
+  rate-constant: {A: 1.0e+06, b: 2.182, Ea: 2.506}
+  note: |-
+    Reaction index: Chemkin #21; RMG #135
+    Template reaction: H_Abstraction
+    Flux pairs: [OH](14), O(41); C(4), [CH3](5);
+    Matched reaction 188 CH4b + OH <=> CH3_p1 + H2O_p in H_Abstraction/training
+    This reaction matched rate rule [C_methane;O_pri_rad]
+    family: H_Abstraction
+- equation: '[OH](14) + [H][H](22) <=> [H](7) + O(41)'  # Reaction 22
+  rate-constant: {A: 1.82e+09, b: 1.21, Ea: 20.07}
+  note: |-
+    Reaction index: Chemkin #22; RMG #141
+    Template reaction: H_Abstraction
+    Flux pairs: [OH](14), O(41); [H][H](22), [H](7);
+    Matched reaction 311 H2 + OH <=> H2O_p + H_p in H_Abstraction/training
+    This reaction matched rate rule [H2;O_pri_rad]
+    family: H_Abstraction
+- equation: '[O](12) + O(41) <=> [OH](14) + [OH](14)'  # Reaction 23
+  rate-constant: {A: 5.26e+09, b: 1.2, Ea: 17.83}
+  note: |-
+    Reaction index: Chemkin #23; RMG #142
+    Template reaction: H_Abstraction
+    Flux pairs: O(41), [OH](14); [O](12), [OH](14);
+    Matched reaction 379 H2O + O_rad <=> HO + OH_p23 in H_Abstraction/training
+    This reaction matched rate rule [OH_rad_H;O_pri_rad]
+    family: H_Abstraction
+- equation: '[H](7) + [OH](14) <=> O(41)'  # Reaction 24
+  type: Chebyshev
+  temperature-range: [300.0, 3000.0]
+  pressure-range: [0.001 atm, 98.692 atm]
+  data:
+  - [10.83, 2.415, -0.0585, -0.03133]
+  - [-0.7939, 0.0514, 0.03562, 0.01919]
+  - [-0.2685, 6.544e-03, 4.573e-03, 2.502e-03]
+  - [-0.1018, 1.566e-03, 1.056e-03, 5.402e-04]
+  - [-0.04393, 5.453e-04, 3.589e-04, 1.749e-04]
+  - [-0.02012, 2.073e-04, 1.345e-04, 6.361e-05]
+  note: |-
+    Reaction index: Chemkin #24; RMG #152
+    PDep reaction: PDepNetwork #25
+    Flux pairs: [H](7), O(41); [OH](14), O(41);
