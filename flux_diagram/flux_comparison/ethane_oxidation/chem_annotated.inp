@@ -1,0 +1,387 @@
+ELEMENTS
+	H
+	D /2.014/
+	T /3.016/
+	C
+	CI /13.003/
+	O
+	OI /17.999/
+	N
+	Ne
+	Ar
+	He
+	Si
+	S
+	F
+	Cl
+	Br
+	I
+	X /195.083/
+END
+
+SPECIES
+    Ar                  ! Ar
+    He                  ! He
+    Ne                  ! Ne
+    N2                  ! N2
+    ethane(1)           ! ethane(1)
+    O2(2)               ! O2(2)
+    C(4)                ! C(4)
+    [CH3](5)            ! [CH3](5)
+    C[CH2](6)           ! C[CH2](6)
+    [H](7)              ! [H](7)
+    [O](12)             ! [O](12)
+    [OH](14)            ! [OH](14)
+    C2H4(17)            ! C=C(17)
+    [H][H](22)          ! [H][H](22)
+    O(41)               ! O(41)
+END
+
+
+
+THERM ALL
+   300.000  1000.000  5000.000
+
+! Thermo library: primaryThermoLibrary
+Ar                      Ar  1               G   200.000  6000.000 1000.00      1
+ 2.50000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+-7.45375000E+02 4.37967000E+00 2.50000000E+00 0.00000000E+00 0.00000000E+00    3
+ 0.00000000E+00 0.00000000E+00-7.45375000E+02 4.37967000E+00                   4
+
+! Thermo library: primaryThermoLibrary
+He                      He  1               G   200.000  6000.000 1000.00      1
+ 2.50000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+-7.45375000E+02 9.28724000E-01 2.50000000E+00 0.00000000E+00 0.00000000E+00    3
+ 0.00000000E+00 0.00000000E+00-7.45375000E+02 9.28724000E-01                   4
+
+! Thermo library: primaryThermoLibrary
+Ne                      Ne  1               G   200.000  6000.000 1000.00      1
+ 2.50000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+-7.45375000E+02 3.35532000E+00 2.50000000E+00 0.00000000E+00 0.00000000E+00    3
+ 0.00000000E+00 0.00000000E+00-7.45375000E+02 3.35532000E+00                   4
+
+! Thermo library: primaryThermoLibrary
+N2                      N   2               G   200.000  6000.000 1000.00      1
+ 2.95258000E+00 1.39690000E-03-4.92632000E-07 7.86010000E-11-4.60755000E-15    2
+-9.23949000E+02 5.87189000E+00 3.53101000E+00-1.23661000E-04-5.02999000E-07    3
+ 2.43531000E-09-1.40881000E-12-1.04698000E+03 2.96747000E+00                   4
+
+! Thermo group additivity estimation: group(Cs-CsHHH) + group(Cs-CsHHH)
+ethane(1)               C   2H   6          G   100.000  5000.000  954.52      1
+ 4.58991754E+00 1.41506257E-02-4.75953511E-06 8.60273706E-10-6.21699491E-14    2
+-1.27218011E+04-3.61787544E+00 3.78030961E+00-3.24231866E-03 5.52369186E-05    3
+-6.38565719E-08 2.28630182E-11-1.16203398E+04 5.21042591E+00                   4
+
+! Thermo library: primaryThermoLibrary
+O2(2)                   O   2               G   100.000  5000.000 1074.56      1
+ 3.15382425E+00 1.67803802E-03-7.69971020E-07 1.51274714E-10-1.08781800E-14    2
+-1.04081878E+03 6.16753883E+00 3.53732181E+00-1.21570930E-03 5.31617825E-06    3
+-4.89443423E-09 1.45845042E-12-1.03858846E+03 4.68368406E+00                   4
+
+! Thermo library: primaryThermoLibrary
+C(4)                    C   1H   4          G   100.000  5000.000 1084.12      1
+ 9.08278561E-01 1.14540647E-02-4.57172635E-06 8.29188900E-10-5.66312625E-14    2
+-9.71998006E+03 1.39930217E+01 4.20541301E+00-5.35554796E-03 2.51122401E-05    3
+-2.13761779E-08 5.97519672E-12-1.01619432E+04-9.21271252E-01                   4
+
+! Thermo library: primaryThermoLibrary + radical(CH3)
+[CH3](5)                C   1H   3          G   100.000  5000.000 1337.64      1
+ 3.54147394E+00 4.76784329E-03-1.82147095E-06 3.28873633E-10-2.22543257E-14    2
+ 1.62239499E+04 1.66025502E+00 3.91546648E+00 1.84155497E-03 3.48738324E-06    3
+-3.32744005E-09 8.49944740E-13 1.62856394E+04 3.51745642E-01                   4
+
+! Thermo group additivity estimation: group(Cs-CsHHH) + group(Cs-CsHHH) + radical(CCJ)
+C[CH2](6)               C   2H   5          G   100.000  5000.000  900.33      1
+ 5.15637174E+00 9.43093847E-03-1.81929018E-06 2.21154935E-10-1.43446970E-14    2
+ 1.20640172E+04-2.91189784E+00 3.82177470E+00-3.43283353E-03 5.09227965E-05    3
+-6.20169997E-08 2.37053876E-11 1.30660155E+04 7.61665027E+00                   4
+
+! Thermo library: primaryThermoLibrary
+[H](7)                  H   1               G   100.000  5000.000 4561.14      1
+ 2.50001921E+00-1.64942466E-08 5.30954718E-12-7.59275309E-16 4.06972192E-20    2
+ 2.54741999E+04-4.45095101E-01 2.50000000E+00-2.06855000E-14 2.66266370E-17    3
+-1.11497399E-20 1.43541790E-24 2.54742178E+04-4.44972896E-01                   4
+
+! Thermo library: primaryThermoLibrary
+[O](12)                 O   1               G   100.000  5000.000 4561.14      1
+ 2.50001921E+00-1.64942466E-08 5.30954718E-12-7.59275309E-16 4.06972192E-20    2
+ 2.92302262E+04 5.12604207E+00 2.50000000E+00-2.06855000E-14 2.66266370E-17    3
+-1.11497399E-20 1.43541790E-24 2.92302441E+04 5.12616427E+00                   4
+
+! Thermo library: primaryThermoLibrary
+[OH](14)                H   1O   1          G   100.000  5000.000 1145.76      1
+ 3.07193451E+00 6.04024250E-04-1.39830426E-08-2.13435187E-11 2.48056798E-15    2
+ 3.57938915E+03 4.57803023E+00 3.51456877E+00 2.92692386E-05-5.32137000E-07    3
+ 1.01945916E-09-3.85933258E-13 3.41425417E+03 2.10434621E+00                   4
+
+! Thermo group additivity estimation: group(Cds-CdsHH) + group(Cds-CdsHH)
+C2H4(17)                C   2H   4          G   100.000  5000.000  940.45      1
+ 5.20303147E+00 7.82435945E-03-2.12679592E-06 3.79681440E-10-2.94663097E-14    2
+ 3.93626590E+03-6.62432001E+00 3.97973256E+00-7.57545285E-03 5.52967836E-05    3
+-6.36214269E-08 2.31763850E-11 5.07746136E+03 4.04626970E+00                   4
+
+! Thermo library: primaryThermoLibrary
+[H][H](22)              H   2               G   100.000  5000.000 1959.07      1
+ 2.78817312E+00 5.87631468E-04 1.59014852E-07-5.52747927E-11 4.34317472E-15    2
+-5.96148572E+02 1.12689431E-01 3.43536405E+00 2.12710960E-04-2.78626417E-07    3
+ 3.40268245E-10-7.76034667E-14-1.03135984E+03-3.90841705E+00                   4
+
+! Thermo library: primaryThermoLibrary
+O(41)                   H   2O   1          G   100.000  5000.000 1130.23      1
+ 2.84325508E+00 2.75107795E-03-7.81027306E-07 1.07242677E-10-5.79384413E-15    2
+-2.99586148E+04 5.91039360E+00 4.05763517E+00-7.87928344E-04 2.90875033E-06    3
+-1.47515927E-09 2.12831582E-13-3.02815866E+04-3.11361652E-01                   4
+
+END
+
+
+
+REACTIONS    KCAL/MOLE   MOLES
+
+! Reaction index: Chemkin #1; RMG #23
+! PDep reaction: PDepNetwork #4
+! Flux pairs: [CH3](5), ethane(1); [CH3](5), ethane(1); 
+[CH3](5)+[CH3](5)(+M)<=>ethane(1)(+M)               1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 1.287e+01    5.701e-01    -1.200e-01   1.214e-02   /
+    CHEB/ -1.064e+00   8.626e-01    -1.171e-01   -1.428e-02  /
+    CHEB/ -6.110e-01   4.467e-01    1.187e-02    -2.817e-02  /
+    CHEB/ -3.223e-01   1.735e-01    4.674e-02    -1.082e-02  /
+    CHEB/ -1.605e-01   4.816e-02    3.234e-02    3.521e-03   /
+    CHEB/ -7.566e-02   3.398e-03    1.339e-02    6.375e-03   /
+
+! Reaction index: Chemkin #2; RMG #9
+! Template reaction: H_Abstraction
+! Flux pairs: [CH3](5), C(4); ethane(1), C[CH2](6); 
+! Matched reaction 215 C2H6 + CH3_r3 <=> C2H5b + CH4 in H_Abstraction/training
+! This reaction matched rate rule [C/H3/Cs\H3;C_methyl]
+! family: H_Abstraction
+[CH3](5)+ethane(1)<=>C(4)+C[CH2](6)                 3.500000e+01 3.440     10.384   
+
+! Reaction index: Chemkin #3; RMG #33
+! Template reaction: Disproportionation
+! Flux pairs: C[CH2](6), C2H4(17); [CH3](5), C(4); 
+! Matched reaction 5 CH3_r1 + C2H5 <=> CH4 + C2H4 in Disproportionation/training
+! This reaction matched rate rule [Root_N-4R->H_4CNOS-u1_N-1R!H->O_N-4CNOS->O_4CNS->C_1CNS->C_Sp-2R!H-1C_2R!H->C]
+! family: Disproportionation
+[CH3](5)+C[CH2](6)<=>C(4)+C2H4(17)                  6.570000e+14 -0.680    0.000    
+
+! Reaction index: Chemkin #4; RMG #37
+! Template reaction: Disproportionation
+! Flux pairs: C[CH2](6), C2H4(17); C[CH2](6), ethane(1); 
+! Matched reaction 6 C2H5 + C2H5-2 <=> C2H6 + C2H4 in Disproportionation/training
+! This reaction matched rate rule [Root_N-4R->H_4CNOS-u1_N-1R!H->O_N-4CNOS->O_Ext-4CNS-R_N-Sp-5R!H#4CCCNNNSSS_N-2R!H->S_N-5R!H->O_Sp-5CS-4CCNSS_1CNS->C]
+! family: Disproportionation
+C[CH2](6)+C[CH2](6)<=>C2H4(17)+ethane(1)            6.900000e+13 -0.350    0.000    
+
+! Reaction index: Chemkin #5; RMG #94
+! PDep reaction: PDepNetwork #17
+! Flux pairs: [H](7), ethane(1); C[CH2](6), ethane(1); 
+[H](7)+C[CH2](6)(+M)<=>ethane(1)(+M)                1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 1.275e+01    1.371e+00    -3.269e-01   1.827e-02   /
+    CHEB/ -1.224e+00   8.565e-01    1.307e-01    -8.198e-02  /
+    CHEB/ -6.219e-01   2.384e-01    1.281e-01    8.748e-03   /
+    CHEB/ -3.104e-01   4.138e-02    4.923e-02    2.470e-02   /
+    CHEB/ -1.439e-01   -1.513e-02   6.291e-03    1.429e-02   /
+    CHEB/ -5.981e-02   -2.181e-02   -7.446e-03   3.882e-03   /
+
+! Reaction index: Chemkin #6; RMG #95
+! PDep reaction: PDepNetwork #17
+! Flux pairs: C[CH2](6), [CH3](5); [H](7), [CH3](5); 
+[H](7)+C[CH2](6)(+M)<=>[CH3](5)+[CH3](5)(+M)        1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 1.322e+01    -1.029e+00   -3.072e-01   1.240e-02   /
+    CHEB/ 6.133e-01    9.072e-01    1.710e-01    -7.282e-02  /
+    CHEB/ 2.891e-02    1.927e-01    1.311e-01    2.488e-02   /
+    CHEB/ -7.081e-02   -1.164e-02   3.030e-02    3.011e-02   /
+    CHEB/ -6.291e-02   -4.131e-02   -1.129e-02   9.962e-03   /
+    CHEB/ -3.744e-02   -2.590e-02   -1.549e-02   -2.653e-03  /
+
+! Reaction index: Chemkin #7; RMG #97
+! PDep reaction: PDepNetwork #18
+! Flux pairs: [H](7), C[CH2](6); C2H4(17), C[CH2](6); 
+[H](7)+C2H4(17)(+M)<=>C[CH2](6)(+M)                 1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 1.197e+01    9.380e-01    -1.800e-01   1.711e-02   /
+    CHEB/ -1.762e-01   9.792e-01    -1.033e-02   -3.970e-02  /
+    CHEB/ -4.501e-01   3.446e-01    7.181e-02    -1.147e-02  /
+    CHEB/ -2.068e-01   7.446e-02    3.899e-02    7.058e-03   /
+    CHEB/ -5.884e-02   -9.713e-03   8.395e-03    5.960e-03   /
+    CHEB/ 4.045e-03    -2.051e-02   -3.292e-03   1.295e-03   /
+
+! Reaction index: Chemkin #8; RMG #92
+! PDep reaction: PDepNetwork #16
+! Flux pairs: [H](7), C(4); [CH3](5), C(4); 
+[H](7)+[CH3](5)(+M)<=>C(4)(+M)                      1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 1.283e+01    1.387e+00    -2.572e-01   -4.390e-03  /
+    CHEB/ -9.884e-01   6.458e-01    9.027e-02    -3.023e-02  /
+    CHEB/ -4.769e-01   1.521e-01    5.277e-02    8.963e-03   /
+    CHEB/ -2.256e-01   3.824e-02    1.731e-02    5.391e-03   /
+    CHEB/ -1.066e-01   8.902e-03    4.446e-03    1.593e-03   /
+    CHEB/ -4.937e-02   1.493e-03    8.852e-04    3.254e-04   /
+
+! Reaction index: Chemkin #9; RMG #81
+! Template reaction: H_Abstraction
+! Flux pairs: [H](7), [H][H](22); ethane(1), C[CH2](6); 
+! Matched reaction 210 C2H6 + H <=> C2H5b + H2_p in H_Abstraction/training
+! This reaction matched rate rule [C/H3/Cs\H3;H_rad]
+! family: H_Abstraction
+[H](7)+ethane(1)<=>[H][H](22)+C[CH2](6)             1.150000e+08 1.900     7.530    
+
+! Reaction index: Chemkin #10; RMG #84
+! Template reaction: Disproportionation
+! Flux pairs: C[CH2](6), C2H4(17); [H](7), [H][H](22); 
+! Matched reaction 4 H + C2H5 <=> H2 + C2H4 in Disproportionation/training
+! This reaction matched rate rule [Root_4R->H_Sp-2R!H-1R!H_2R!H-u1_N-1R!H->O_1CN->C_2R!H->C]
+! family: Disproportionation
+[H](7)+C[CH2](6)<=>[H][H](22)+C2H4(17)              1.083000e+13 0.000     0.000    
+
+! Reaction index: Chemkin #11; RMG #86
+! Template reaction: H_Abstraction
+! Flux pairs: [H](7), [H][H](22); C(4), [CH3](5); 
+! Matched reaction 186 CH4b + H <=> CH3_p1 + H2_p in H_Abstraction/training
+! This reaction matched rate rule [C_methane;H_rad]
+! family: H_Abstraction
+[H](7)+C(4)<=>[H][H](22)+[CH3](5)                   4.100000e+03 3.156     8.755    
+
+! Reaction index: Chemkin #12; RMG #101
+! PDep reaction: PDepNetwork #19
+! Flux pairs: [H](7), [H][H](22); [H](7), [H][H](22); 
+[H](7)+[H](7)(+M)<=>[H][H](22)(+M)                  1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 8.443e+00    1.752e+00    -2.297e-01   -1.847e-02  /
+    CHEB/ 4.049e-02    2.550e-01    7.651e-02    -2.108e-02  /
+    CHEB/ -1.096e-01   4.954e-02    1.772e-03    -2.092e-03  /
+    CHEB/ -4.089e-02   1.255e-02    1.907e-03    2.168e-03   /
+    CHEB/ -1.609e-02   3.968e-03    1.591e-03    1.393e-03   /
+    CHEB/ -6.217e-03   1.465e-03    7.025e-04    6.059e-04   /
+
+! Reaction index: Chemkin #13; RMG #91
+! PDep reaction: PDepNetwork #15
+! Flux pairs: O2(2), [OH](14); [H](7), [O](12); 
+O2(2)+[H](7)(+M)<=>[O](12)+[OH](14)(+M)             1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 6.745e+00    -3.151e-04   -2.360e-04   -1.448e-04  /
+    CHEB/ 6.509e+00    1.462e-04    1.095e-04    6.717e-05   /
+    CHEB/ 1.592e-01    7.486e-05    5.606e-05    3.439e-05   /
+    CHEB/ 5.994e-02    4.574e-05    3.425e-05    2.101e-05   /
+    CHEB/ 2.717e-02    -3.258e-06   -2.438e-06   -1.495e-06  /
+    CHEB/ 8.564e-03    -1.986e-05   -1.487e-05   -9.119e-06  /
+
+! Reaction index: Chemkin #14; RMG #129
+! Template reaction: H_Abstraction
+! Flux pairs: C(4), [CH3](5); [O](12), [OH](14); 
+! Matched reaction 187 CH4b + O_rad <=> CH3_p1 + OH_p23 in H_Abstraction/training
+! This reaction matched rate rule [OH_rad_H;C_methyl]
+! family: H_Abstraction
+[O](12)+C(4)<=>[OH](14)+[CH3](5)                    4.400000e+05 2.500     6.577    
+
+! Reaction index: Chemkin #15; RMG #133
+! Template reaction: H_Abstraction
+! Flux pairs: ethane(1), C[CH2](6); [O](12), [OH](14); 
+! Matched reaction 211 C2H6 + O_rad <=> C2H5b + OH_p23 in H_Abstraction/training
+! This reaction matched rate rule [OH_rad_H;C_rad/H2/Cs\H3]
+! family: H_Abstraction
+[O](12)+ethane(1)<=>[OH](14)+C[CH2](6)              1.800000e+05 2.800     5.800    
+
+! Reaction index: Chemkin #16; RMG #136
+! Template reaction: Disproportionation
+! Flux pairs: [O](12), [OH](14); C[CH2](6), C2H4(17); 
+! Estimated from node Root_N-4R->H_N-4CNOS-u1_N-1R!H->O_Sp-2R!H-1CNS_1CNS->C_2R!H->C
+! Multiplied by reaction path degeneracy 3.0
+[O](12)+C[CH2](6)<=>[OH](14)+C2H4(17)               9.030000e+13 0.000     0.000    
+
+! Reaction index: Chemkin #17; RMG #139
+! Template reaction: H_Abstraction
+! Flux pairs: [H][H](22), [H](7); [O](12), [OH](14); 
+! Matched reaction 285 H2 + O_rad <=> HO + H in H_Abstraction/training
+! This reaction matched rate rule [OH_rad_H;H_rad]
+! family: H_Abstraction
+[O](12)+[H][H](22)<=>[H](7)+[OH](14)                3.400000e+08 1.500     22.950   
+
+! Reaction index: Chemkin #18; RMG #153
+! PDep reaction: PDepNetwork #31
+! Flux pairs: [O](12), [OH](14); [H](7), [OH](14); 
+[O](12)+[H](7)(+M)<=>[OH](14)(+M)                   1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 9.521e+00    2.322e+00    -1.002e-01   -3.487e-02  /
+    CHEB/ -6.362e-01   4.313e-02    4.294e-02    3.026e-02   /
+    CHEB/ -1.356e-01   2.563e-02    1.482e-02    2.425e-03   /
+    CHEB/ -4.959e-02   6.105e-03    1.503e-03    -2.680e-03  /
+    CHEB/ -2.032e-02   8.585e-04    -1.848e-04   -9.752e-04  /
+    CHEB/ -8.400e-03   2.267e-04    4.478e-05    -3.502e-05  /
+
+! Reaction index: Chemkin #19; RMG #125
+! Template reaction: H_Abstraction
+! Flux pairs: [OH](14), O(41); ethane(1), C[CH2](6); 
+! Matched reaction 212 C2H6 + OH <=> C2H5b + H2O_p in H_Abstraction/training
+! This reaction matched rate rule [C/H3/Cs\H3;O_pri_rad]
+! family: H_Abstraction
+[OH](14)+ethane(1)<=>O(41)+C[CH2](6)                1.610000e+06 2.224     0.741    
+
+! Reaction index: Chemkin #20; RMG #131
+! Template reaction: Disproportionation
+! Flux pairs: C[CH2](6), C2H4(17); [OH](14), O(41); 
+! Matched reaction 13 HO + C2H5 <=> H2O + C2H4 in Disproportionation/training
+! This reaction matched rate rule [Root_N-4R->H_4CNOS-u1_N-1R!H->O_4CNOS->O_Sp-2R!H-1CNS_1CNS->C_2R!H->C]
+! family: Disproportionation
+[OH](14)+C[CH2](6)<=>O(41)+C2H4(17)                 7.230000e+13 0.000     0.000    
+
+! Reaction index: Chemkin #21; RMG #135
+! Template reaction: H_Abstraction
+! Flux pairs: [OH](14), O(41); C(4), [CH3](5); 
+! Matched reaction 188 CH4b + OH <=> CH3_p1 + H2O_p in H_Abstraction/training
+! This reaction matched rate rule [C_methane;O_pri_rad]
+! family: H_Abstraction
+[OH](14)+C(4)<=>O(41)+[CH3](5)                      1.000000e+06 2.182     2.506    
+
+! Reaction index: Chemkin #22; RMG #141
+! Template reaction: H_Abstraction
+! Flux pairs: [OH](14), O(41); [H][H](22), [H](7); 
+! Matched reaction 311 H2 + OH <=> H2O_p + H_p in H_Abstraction/training
+! This reaction matched rate rule [H2;O_pri_rad]
+! family: H_Abstraction
+[OH](14)+[H][H](22)<=>[H](7)+O(41)                  1.820000e+09 1.210     20.070   
+
+! Reaction index: Chemkin #23; RMG #142
+! Template reaction: H_Abstraction
+! Flux pairs: O(41), [OH](14); [O](12), [OH](14); 
+! Matched reaction 379 H2O + O_rad <=> HO + OH_p23 in H_Abstraction/training
+! This reaction matched rate rule [OH_rad_H;O_pri_rad]
+! family: H_Abstraction
+[O](12)+O(41)<=>[OH](14)+[OH](14)                   5.260000e+09 1.200     17.830   
+
+! Reaction index: Chemkin #24; RMG #152
+! PDep reaction: PDepNetwork #25
+! Flux pairs: [H](7), O(41); [OH](14), O(41); 
+[H](7)+[OH](14)(+M)<=>O(41)(+M)                     1.000e+00 0.000     0.000    
+    TCHEB/ 300.000   3000.000 /
+    PCHEB/ 0.001     98.692   /
+    CHEB/ 6 4/
+    CHEB/ 1.083e+01    2.415e+00    -5.850e-02   -3.133e-02  /
+    CHEB/ -7.939e-01   5.140e-02    3.562e-02    1.919e-02   /
+    CHEB/ -2.685e-01   6.544e-03    4.573e-03    2.502e-03   /
+    CHEB/ -1.018e-01   1.566e-03    1.056e-03    5.402e-04   /
+    CHEB/ -4.393e-02   5.453e-04    3.589e-04    1.749e-04   /
+    CHEB/ -2.012e-02   2.073e-04    1.345e-04    6.361e-05   /
+
+END
+
