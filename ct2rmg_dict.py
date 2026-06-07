@@ -23,7 +23,6 @@ def same_reaction(rmg_rxn, ct_rxn):
 chemkin = sys.argv[1]
 
 working_dir = os.path.dirname(chemkin)
-transport = os.path.join(working_dir, 'tran.dat')
 species_dict = os.path.join(working_dir, 'species_dictionary.txt')
 output_pickle_file = os.path.join(working_dir, 'ct2rmg_rxn.pickle')
 
@@ -35,7 +34,6 @@ if os.path.exists(output_pickle_file):
 species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(
     chemkin,
     dictionary_path=species_dict,
-    transport_path=transport,
     use_chemkin_names=True
 )
 if '-gas' in chemkin:
@@ -43,7 +41,6 @@ if '-gas' in chemkin:
     species_list, reaction_list = rmgpy.chemkin.load_chemkin_file(
     chemkin,
     dictionary_path=species_dict,
-    transport_path=transport,
     surface_path=surface_path,
     use_chemkin_names=True
 )
@@ -126,5 +123,6 @@ with concurrent.futures.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor
 #     ct2rmg_rxn[i] = get_corresepondence(i)
 
 # save the result
-with open('ct2rmg_rxn.pickle', 'wb') as handle:
+with open(os.path.join(working_dir, 'ct2rmg_rxn.pickle'), 'wb') as handle:
     pickle.dump(ct2rmg_rxn, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
